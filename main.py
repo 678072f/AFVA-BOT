@@ -8,6 +8,7 @@ import os
 import requests
 import json
 from dotenv import load_dotenv
+import botCommands as BC
 
 client = discord.Bot()
 token = os.getenv('TOKEN')
