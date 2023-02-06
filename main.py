@@ -4,8 +4,19 @@
 # This example requires the 'message_content' intent.
 
 import discord
+import os
 import requests
 import json
+from dotenv import load_dotenv
+
+client = discord.Bot()
+token = os.getenv('TOKEN')
+
+@client.event
+async def on_ready():
+    print("Logged in as a bot {0.user}".format(client))
+
+
 
 def get_user():
     response = requests.get("https://zenquotes.io/api/random")
@@ -34,7 +45,8 @@ intents.message_content = True
 
 client = MyClient(intents=intents)
 
-client.run('MTAzMzg0OTgxODMxOTE3NTczMA.GjM9v1.biTbqYkCrMDuDLYFF0GKUYmPqPooBg4Wcgpda4')
+client.run(token)
 
 # os.getenv('TOKEN')
 # 9059765248
+# TOKEN = 'MTAzMzg0OTgxODMxOTE3NTczMA.GjM9v1.biTbqYkCrMDuDLYFF0GKUYmPqPooBg4Wcgpda4'
