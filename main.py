@@ -57,24 +57,24 @@ async def on_message(message):
             # Iterate through the roles provided from the server
             for afvaRole in roleList:
                 # Check if the role exists and store in 'role'
-                role = discord.utils.get(member.guild.roles, id = afvaRole)
+                role = discord.utils.get(member.guild.roles, id = int(afvaRole))
 
                 # Check if the user already has the role. If yes, skip
-                if afvaRole in member.roles:
-                    await message.channel.send(f"You already have the {afvaRole} role! Moving on...")
+                if role in member.roles:
+                    print(f"You already have the {role} role! Moving on...")
                 # If the user doesn't already have the role, add it
                 else:
                     # Make sure the role exists
                     if role is not None:
                         await member.add_roles(role)
-                        await message.channel.send(f"Added {role} role.")
+                        print(f"Added {role} role.")
                     
                     # Send a message if the role isn't available
                     else:
-                        await message.channel.send(f"The role with ID: {afvaRole} was not found on this server!")
+                        print(f"The role with ID: {role} was not found on this server!")
                 
-                npRole = discord.utils.get(member.guild.roles, id=str(BC.discordRoles["New Pilot"]))
-                print(npRole)
+                npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
+                
                 if npRole in member.roles:
                     await member.remove_roles(npRole)
                 
