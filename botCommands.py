@@ -12,7 +12,7 @@ import json
 # Global Constants
 verificationURL = 'https://dev.afva.net/discord_info.ws?id='
 
-afvaStaffRoles = ["Pilot","Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
+afvaStaffRoles = ["Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
 
 # Discord roles. Format: ['role', 'id']
 discordRoles = {
