@@ -67,14 +67,19 @@ async def on_message(message):
                     # Make sure the role exists
                     if role is not None:
                         await member.add_roles(role)
-                        await message.channel.send("Added role.")
+                        await message.channel.send(f"Added {role} role.")
                     
                     # Send a message if the role isn't available
                     else:
                         await message.channel.send(f"The role with ID: {afvaRole} was not found on this server!")
                 
+                npRole = discord.utils.get(member.guild.roles, id=str(BC.discordRoles["New Pilot"]))
+                print(npRole)
+                if npRole in member.roles:
+                    await member.remove_roles(npRole)
+                
                 # Print the role (for debugging)
-                print(role)
+                # print(role)
 
             # Respond with user's new nickname
             await message.channel.send(f"Success! Hello {nickName}")

@@ -82,7 +82,11 @@ def verifyUser(id):
     try:
         # Fetch data from AFVA Site
         rawData = requests.get(f"{verificationURL + str(id)}")
-        jsonData = json.loads(rawData.text)
+        try:
+            jsonData = json.loads(rawData.text)
+
+        except TypeError:
+            return "User is not registered! Please register your account and try again."
 
         # Separate data into useable strings
         nickName = f'{jsonData["firstName"]} {jsonData["lastName"]} - {jsonData["pilotCode"]}'
