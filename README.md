@@ -1,6 +1,11 @@
 # README
 
-This is a Discord Bot for Air France/KLM Virtual Airlines. The current bot is only an example from a tutorial.
+This is a Discord Bot for Air France/KLM Virtual Airlines.
+
+# Capabilities
+
+- Registering User's Discord account with dev.afva.net server.
+- Verifying user registration and auto-assigning roles and updating nickname.
 
 # Known-Issues
 
