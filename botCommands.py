@@ -3,8 +3,6 @@
  # AFVA Bot Version 1.0
 # By: Daniel Duhon
 
-# This example requires the 'message_content' intent.
-
 import requests
 import json
 
@@ -14,7 +12,8 @@ verificationURL = 'https://dev.afva.net/discord_info.ws?id='
 
 afvaStaffRoles = ["Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
 
-# Discord roles. Format: ['role', 'id']
+
+# Discord roles. Format: 'role': 'id'
 discordRoles = {
     'Senior Staff': '646449197469532172', 
     'Tour Guide': '1062420370268897334', 
@@ -44,8 +43,10 @@ discordRoles = {
     'New Pilot': '793313617343938601'
 }
 
+# Available Ranks
 afvaRanks = ["First Officer", "Captain", "Senior Captain", "Assistant Chief Pilot", "Chief Pilot"]
 
+# Equipment Programs
 afvaPrograms = ["A220-3(CSeries)", "A320", "B737-800", "A330-200", "B787-9", "DC-3", "A350-900", "B747-400", "B777-300", "A380-800", "Concorde"]
 
 
