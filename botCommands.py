@@ -86,7 +86,7 @@ def verifyUser(id):
             jsonData = json.loads(rawData.text)
 
         except TypeError:
-            return "User is not registered! Please register your account and try again."
+            print("User is not registered! Please register your account and try again.")
 
         # Separate data into useable strings
         nickName = f'{jsonData["firstName"]} {jsonData["lastName"]} - {jsonData["pilotCode"]}'
@@ -112,8 +112,8 @@ def verifyUser(id):
 
 
 # Test code
-user = verifyUser('0995')
+# user = verifyUser('0995')
 
-# verifyUser('2563')
+# # verifyUser('2563')
 
-print(user[1])
+# print(user[1])

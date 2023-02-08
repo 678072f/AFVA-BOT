@@ -8,11 +8,22 @@ import os
 from dotenv import load_dotenv
 import botCommands as BC
 import asyncio
+import logging as log
+import datetime
 
 # Global Constants
 load_dotenv()
 token = os.getenv('TOKEN')
 registrationURL = 'https://dev.afva.net/discordreg.do?id='
+currentTime = str(datetime.datetime.now()).split(' ')[0]
+
+# Set up Logging
+log.basicConfig(
+    filename='afva-bot-%s.log' % currentTime,
+    filemode='w',
+    level=log.DEBUG, ### Change to INFO when releasing ###
+    format='%(levelname)s:%(asctime)s:%(message)s'
+)
 
 # Setup Discord
 intents = discord.Intents.all()
@@ -22,7 +33,13 @@ client = discord.Client(intents=intents)
 # Event Handlers
 @client.event
 async def on_ready():
+    log.info("Logged in as a bot {0.user}".format(client))
     print("Logged in as a bot {0.user}".format(client))
+
+@client.event
+async def on_member_join(member):
+    channel = discord.utils.get(member.guild.text_channels, name="new-members")
+    await channel.send(f"Welcome to Air France/KLM Virtual Airlines, @{member}!\n This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing !verify in #verification, or type ?help? to see a list of options.")
 
 @client.event
 async def on_message(message):
@@ -32,17 +49,21 @@ async def on_message(message):
     channel = str(message.channel.name)
     user_message = str(message.content)
 
-    print(f"Message {user_message} by {username} on {channel}.")
+    # print(f"Message {user_message} by {username} on {channel}.")
 
     # Make sure that the bot only responds to users
     if message.author == client.user:
         return
 
     # Check if the user sent "!verify"
-    if user_message.lower() == "!verify":
+    if user_message.lower() == "!verify" and channel == "testing":
+        log.info(f"{username} used !verify in {channel} channel.")
+
         # Respond to the user with a welcome message and send the verification link:
         await message.channel.send(f"Hello {username}, I am sending you to the verification link.")
         await message.channel.send(f'Please open: {registrationURL + user_id} to register your account, then react with 👍.')
+
+        log.info(f"Sent verification link to {username}.")
 
         # Define function to check for thumbsup reaction
         def check(reaction, user):
@@ -53,6 +74,7 @@ async def on_message(message):
             reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
             # Store the user's nickname and roles from the verification Function
             nickName, roleList = BC.verifyUser(user_id)
+            log.debug(f"Received {nickName} and {roleList} roles.")
 
             # Iterate through the roles provided from the server
             for afvaRole in roleList:
@@ -61,40 +83,47 @@ async def on_message(message):
 
                 # Check if the user already has the role. If yes, skip
                 if role in member.roles:
+                    log.info(f"You already have the {role} role! Moving on...")
                     print(f"You already have the {role} role! Moving on...")
                 # If the user doesn't already have the role, add it
                 else:
                     # Make sure the role exists
                     if role is not None:
                         await member.add_roles(role)
+                        log.info(f"Added {role} role to {member}.")
                         print(f"Added {role} role.")
                     
                     # Send a message if the role isn't available
                     else:
-                        print(f"The role with ID: {role} was not found on this server!")
+                        log.warning(f"The {role} role was not found on this server!")
+                        print(f"The {role} role was not found on this server!")
                 
                 npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
                 
                 if npRole in member.roles:
                     await member.remove_roles(npRole)
+                    log.info(f"Removed New Pilot role from {member}")
                 
                 # Print the role (for debugging)
                 # print(role)
 
             # Respond with user's new nickname
-            await message.channel.send(f"Success! Hello {nickName}")
+            if nickName is not None:
+                await message.channel.send(f"Success! Hello {nickName}")
+                log.info('User successfully verified.')
 
         # Catch timeout
         except asyncio.TimeoutError:
-            await channel.send('👎')
+            nickName = None
+            await message.channel.send('Timeout Error! Please try again.')
+            log.warning('Timeout Error! Please try again. User did not respond within 1 minute.')
 
         # Update Nickname
-        await member.edit(nick=nickName)
-        
-@client.event
-async def on_member_join(member):
-    username = str(member.id)
-    await member.send(f"Welcome {username}!")
-    return
+        if nickName is not None:
+            try:
+                await member.edit(nick=nickName)
+                log.info(f"{member}'s nickname was updated to: {nickName}.")
+            except discord.errors.Forbidden:
+                log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 client.run(token)
