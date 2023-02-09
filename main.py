@@ -10,6 +10,8 @@ import botCommands as BC
 import asyncio
 import logging as log
 import datetime
+import schedule
+import time
 
 # Global Constants
 load_dotenv()
@@ -76,33 +78,39 @@ async def on_message(message):
             nickName, roleList = BC.verifyUser(user_id)
             log.debug(f"Received {nickName} and {roleList} roles.")
 
-            # Iterate through the roles provided from the server
-            for afvaRole in roleList:
-                # Check if the role exists and store in 'role'
-                role = discord.utils.get(member.guild.roles, id = int(afvaRole))
+            if roleList:
+                # Iterate through the roles provided from the server
+                for afvaRole in roleList:
+                    # Check if the role exists and store in 'role'
+                    role = discord.utils.get(member.guild.roles, id = int(afvaRole))
 
-                # Check if the user already has the role. If yes, skip
-                if role in member.roles:
-                    log.info(f"You already have the {role} role! Moving on...")
-                    print(f"You already have the {role} role! Moving on...")
-                # If the user doesn't already have the role, add it
-                else:
-                    # Make sure the role exists
-                    if role is not None:
-                        await member.add_roles(role)
-                        log.info(f"Added {role} role to {member}.")
-                        print(f"Added {role} role.")
-                    
-                    # Send a message if the role isn't available
+                    # Check if the user already has the role. If yes, skip
+                    if role in member.roles:
+                        log.info(f"You already have the {role} role! Moving on...")
+                        print(f"You already have the {role} role! Moving on...")
+                    # If the user doesn't already have the role, add it
                     else:
-                        log.warning(f"The {role} role was not found on this server!")
-                        print(f"The {role} role was not found on this server!")
+                        # Make sure the role exists
+                        if role is not None:
+                            await member.add_roles(role)
+                            log.info(f"Added {role} role to {member}.")
+                            print(f"Added {role} role.")
+                        
+                        # Send a message if the role isn't available
+                        else:
+                            log.warning(f"The {role} role was not found on this server!")
+                            print(f"The {role} role was not found on this server!")
                 
-                npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
-                
-                if npRole in member.roles:
-                    await member.remove_roles(npRole)
-                    log.info(f"Removed New Pilot role from {member}")
+                    # Store the ID of the New Pilot role
+                    npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
+                    
+                    # Check if the user has the New Pilot role and remove it if verified.
+                    if npRole in member.roles:
+                        await member.remove_roles(npRole)
+                        log.info(f"Removed New Pilot role from {member}")
+
+                else:
+                    log.error(f"Error! The roleList is empty!")
                 
                 # Print the role (for debugging)
                 # print(role)
@@ -126,4 +134,16 @@ async def on_message(message):
             except discord.errors.Forbidden:
                 log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
+# Function to clear verification channel
+async def clearChannel(channelToBeCleared):
+    channel = discord.utils.get(client.guild.text_channels, name="channelToBeCleared")
+    await channel.purge()
+
+# Verification channel name
+verChannel = "verification"
+
+# Clear the channel every friday at 23:59
+schedule.every().week.friday.at("23:59").do(clearChannel, verChannel)
+
+# Run the bot
 client.run(token)
