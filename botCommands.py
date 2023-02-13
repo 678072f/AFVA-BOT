@@ -52,33 +52,34 @@ afvaPrograms = ["A220-3(CSeries)", "A320", "B737-800", "A330-200", "B787-9", "DC
 
 # Set User's roles based on security roles, rank, and equipment program
 def setUserRoles(roles, rank, equipment):
-    
+    # Initialize empty roles list
     discordUserRole = []
+
+    # Check for roles
     for role in roles:
-        if role == "Pilot":
+        if role == "Pilot": # Assign pilot role
             discordUserRole.append(discordRoles["Pilots"])
-        elif not discordRoles["Fleet Staff"] in discordUserRole:
+        elif not discordRoles["Fleet Staff"] in discordUserRole: # Assign Fleet Staff role once if user has any staff roles in afvaStaffRoles
             if role in afvaStaffRoles:
                 discordUserRole.append(discordRoles["Fleet Staff"])
-        elif role == "Instructor":
+        elif role == "Instructor": # Assign Instructor role
             discordUserRole.append(discordRoles["Instructors"])
-        elif role == "Senior Staff":
-            discordUserRole.append(discordRoles["Senior Staff"])
-        elif (role == "Developer" or role == "Tech") and discordRoles["IT"] not in discordUserRole:
+        elif (role == "Developer" or role == "Tech") and discordRoles["IT"] not in discordUserRole: # Add IT role if the user has the Developer or Tech role AND does not already have role
             discordUserRole.append(discordRoles["IT"])
-        elif role == "Operations" and discordRoles["Senior Staff"] not in discordUserRole:
+        elif role == "Operations" and discordRoles["Senior Staff"] not in discordUserRole: # Add operations role if user is not SS and has Ops role
             discordUserRole.append(discordRoles["Operations & Administrative Staff"])
-        elif role == "Event":
+        elif role == "Event": # Assign Events role
             discordUserRole.append(discordRoles["Events"])
 
-    discordUserRole.append(discordRoles[rank])
-    discordUserRole.append(discordRoles[equipment])
+    discordUserRole.append(discordRoles[rank]) # Assigns role based on Rank
+    discordUserRole.append(discordRoles[equipment]) # Assigns role based on Program
 
+    # Return Roles
     return discordUserRole
 
 
 # Verify User Exists and apply appropriate roles
-def verifyUser(id):
+def fetchUserInfo(id):
     # If user exists, store data
     try:
         # Fetch data from AFVA Site
@@ -88,29 +89,31 @@ def verifyUser(id):
 
         except TypeError:
             print("User is not registered! Please register your account and try again.")
+            return None
 
         # Separate data into useable strings
-        nickName = f'{jsonData["firstName"]} {jsonData["lastName"]} - {jsonData["pilotCode"]}'
+        pilotID = jsonData["pilotCode"]
+        
+        # Check if the user has a Pilot ID
+        if pilotID:
+            nickName = f'{jsonData["firstName"]} {jsonData["lastName"]} - {pilotID}'
+        else:
+            nickName = f"{jsonData['firstName']} {jsonData['lastName']} - NEW PILOT"
+
         roles = jsonData["roles"]
         rank = jsonData["rank"]
         equipProgram = jsonData["eqType"]
 
         # Parse roles for Discord roles
         userRoles = setUserRoles(roles, rank, equipProgram)
-       
-        # DEBUG CODE:
-        # print(nickName, roles)
-        # print(userRoles)
 
         return [nickName, userRoles]
 
     # Catch the case where the user is not registered.
     except json.decoder.JSONDecodeError:
         print("Error! User not found. Please register your Discord account.")
-        userRole = discordRoles["New Pilot"]
 
-        return userRole
-
+        return None
 
 # Test code
 # user = verifyUser('0995')

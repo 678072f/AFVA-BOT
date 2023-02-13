@@ -32,6 +32,100 @@ intents = discord.Intents.all()
 intents.members = True
 client = discord.Client(intents=intents)
 
+async def verifyUser(message, username, id):
+    member = message.author
+
+    # Respond to the user with a welcome message and send the verification link:
+    await message.channel.send(f"Hello {username}, I am sending you to the verification link.")
+    await message.channel.send(f'Please open: {registrationURL + id} to register your account, then react with 👍.')
+
+    log.info(f"Sent verification link to {username}.")
+
+    # Define function to check for thumbsup reaction
+    def check(reaction, user):
+        return user == message.author and str(reaction.emoji) == '👍'
+
+    try:
+        # Check for the user's reaction
+        reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+        # Store the user's nickname and roles from the verification Function
+        nickName, roleList = BC.fetchUserInfo(id)
+        log.debug(f"Received {nickName} and {roleList} roles.")
+
+        if roleList:
+            # Iterate through the roles provided from the server
+            for afvaRole in roleList:
+                # Check if the role exists and store in 'role'
+                role = discord.utils.get(member.guild.roles, id = int(afvaRole))
+
+                # Check if the user already has the role. If yes, skip
+                if role in member.roles:
+                    log.info(f"You already have the {role} role! Moving on...")
+                    print(f"You already have the {role} role! Moving on...")
+                # If the user doesn't already have the role, add it
+                else:
+                    # Make sure the role exists
+                    if role is not None:
+                        await member.add_roles(role)
+                        log.info(f"Added {role} role to {member}.")
+                        print(f"Added {role} role.")
+                    
+                    # Send a message if the role isn't available
+                    else:
+                        log.warning(f"The {role} role was not found on this server!")
+                        print(f"The {role} role was not found on this server!")
+            
+                # Store the ID of the New Pilot role
+                npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
+                
+                # Check if the user has the New Pilot role and remove it if verified.
+                if npRole in member.roles:
+                    await member.remove_roles(npRole)
+                    log.info(f"Removed New Pilot role from {member}")
+
+        else:
+            log.info(f"Error! The roleList is empty!")
+
+        # Respond with user's new nickname
+        if nickName is not None:
+            await message.channel.send(f"Success! Hello {nickName}")
+            log.info('User successfully verified.')
+
+    # Catch timeout
+    except asyncio.TimeoutError:
+        nickName = None
+        await message.channel.send('Timeout Error! Please try again.')
+        log.warning('Timeout Error! Please try again. User did not respond within 1 minute.')
+
+    # Update Nickname
+    if nickName is not None:
+        try:
+            await member.edit(nick=nickName)
+            log.info(f"{member}'s nickname was updated to: {nickName}.")
+        except discord.errors.Forbidden:
+            log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+
+
+async def showHelpMenu(member, message):
+    helpMessage = f"Hello {member}! Here are the available options:\n ``` !help: View this menu.\n !verify: Verify your account and obtain roles.\n !sync: Sync your discord roles with the website. ```"
+
+    await message.channel.send(helpMessage)
+
+
+async def syncRoles(member, message, id):
+    nickName, newRoles = BC.fetchUserInfo(id)
+    log.debug(f"Received {nickName} and {newRoles} roles.")
+
+    await message.channel.send(f"You have the following roles: {newRoles}")
+
+    if nickName is not None:
+        try:
+            await member.edit(nick=nickName)
+            log.info(f"{member}'s nickname was updated to: {nickName}.")
+        except discord.errors.Forbidden:
+            log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+
+
 # Event Handlers
 @client.event
 async def on_ready():
@@ -51,8 +145,6 @@ async def on_message(message):
     channel = str(message.channel.name)
     user_message = str(message.content)
 
-    # print(f"Message {user_message} by {username} on {channel}.")
-
     # Make sure that the bot only responds to users
     if message.author == client.user:
         return
@@ -60,84 +152,26 @@ async def on_message(message):
     # Check if the user sent "!verify"
     if user_message.lower() == "!verify" and channel == "testing":
         log.info(f"{username} used !verify in {channel} channel.")
+        await verifyUser(message, username, user_id)
 
-        # Respond to the user with a welcome message and send the verification link:
-        await message.channel.send(f"Hello {username}, I am sending you to the verification link.")
-        await message.channel.send(f'Please open: {registrationURL + user_id} to register your account, then react with 👍.')
+    if user_message.lower() == "?help?":
+        log.info(f"{member} used ?help?")
+        await showHelpMenu(member, message)
+        
 
-        log.info(f"Sent verification link to {username}.")
+    if user_message.lower() == "!sync":
+        log.info(f"{member} used !sync.")
+        await syncRoles(member, message, user_id)
 
-        # Define function to check for thumbsup reaction
-        def check(reaction, user):
-            return user == message.author and str(reaction.emoji) == '👍'
-
-        try:
-            # Check for the user's reaction
-            reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
-            # Store the user's nickname and roles from the verification Function
-            nickName, roleList = BC.verifyUser(user_id)
-            log.debug(f"Received {nickName} and {roleList} roles.")
-
-            if roleList:
-                # Iterate through the roles provided from the server
-                for afvaRole in roleList:
-                    # Check if the role exists and store in 'role'
-                    role = discord.utils.get(member.guild.roles, id = int(afvaRole))
-
-                    # Check if the user already has the role. If yes, skip
-                    if role in member.roles:
-                        log.info(f"You already have the {role} role! Moving on...")
-                        print(f"You already have the {role} role! Moving on...")
-                    # If the user doesn't already have the role, add it
-                    else:
-                        # Make sure the role exists
-                        if role is not None:
-                            await member.add_roles(role)
-                            log.info(f"Added {role} role to {member}.")
-                            print(f"Added {role} role.")
-                        
-                        # Send a message if the role isn't available
-                        else:
-                            log.warning(f"The {role} role was not found on this server!")
-                            print(f"The {role} role was not found on this server!")
-                
-                    # Store the ID of the New Pilot role
-                    npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
-                    
-                    # Check if the user has the New Pilot role and remove it if verified.
-                    if npRole in member.roles:
-                        await member.remove_roles(npRole)
-                        log.info(f"Removed New Pilot role from {member}")
-
-                else:
-                    log.error(f"Error! The roleList is empty!")
-                
-                # Print the role (for debugging)
-                # print(role)
-
-            # Respond with user's new nickname
-            if nickName is not None:
-                await message.channel.send(f"Success! Hello {nickName}")
-                log.info('User successfully verified.')
-
-        # Catch timeout
-        except asyncio.TimeoutError:
-            nickName = None
-            await message.channel.send('Timeout Error! Please try again.')
-            log.warning('Timeout Error! Please try again. User did not respond within 1 minute.')
-
-        # Update Nickname
-        if nickName is not None:
-            try:
-                await member.edit(nick=nickName)
-                log.info(f"{member}'s nickname was updated to: {nickName}.")
-            except discord.errors.Forbidden:
-                log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 # Function to clear verification channel
 async def clearChannel(channelToBeCleared):
-    channel = discord.utils.get(client.guild.text_channels, name="channelToBeCleared")
-    await channel.purge()
+    channel = discord.utils.get(client.guild.text_channels, name=channelToBeCleared)
+    try:
+        await channel.purge()
+        log.info(f"Clearing {channelToBeCleared}...")
+    except:
+        log.error(f"An error occurred when trying to clear {channelToBeCleared}!")
 
 # Verification channel name
 verChannel = "verification"
