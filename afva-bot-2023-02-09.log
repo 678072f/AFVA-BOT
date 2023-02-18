@@ -1,0 +1,8 @@
+WARNING:2023-02-09 18:05:24,302:PyNaCl is not installed, voice will NOT be supported
+DEBUG:2023-02-09 18:05:24,302:on_ready has successfully been registered as an event
+DEBUG:2023-02-09 18:05:24,303:on_member_join has successfully been registered as an event
+DEBUG:2023-02-09 18:05:24,303:on_message has successfully been registered as an event
+DEBUG:2023-02-09 18:05:24,303:Using selector: KqueueSelector
+INFO:2023-02-09 18:05:24,304:logging in using static token
+INFO:2023-02-09 18:05:25,163:Shard ID None has connected to Gateway (Session ID: fc485593eea33c581422682603db2f3c).
+INFO:2023-02-09 18:05:27,190:Logged in as a bot AFVA-BOT#8057

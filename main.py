@@ -32,6 +32,8 @@ intents = discord.Intents.all()
 intents.members = True
 client = discord.Client(intents=intents)
 
+
+# User verification funtion
 async def verifyUser(message, username, id):
     member = message.author
 
@@ -49,8 +51,14 @@ async def verifyUser(message, username, id):
         # Check for the user's reaction
         reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
         # Store the user's nickname and roles from the verification Function
-        nickName, roleList = BC.fetchUserInfo(id)
-        log.debug(f"Received {nickName} and {roleList} roles.")
+        
+        try:
+            nickName, roleList = BC.fetchUserInfo(id)
+            log.debug(f"Received {nickName} and {roleList} roles.")
+        except TypeError:
+            await message.channel.send(f"Error! {member} is not registered.\nPlease use !verify again and register using the link provided.")
+            log.error(f"Verification Error! {member} is not registered.")
+            return
 
         if roleList:
             # Iterate through the roles provided from the server
@@ -120,10 +128,36 @@ async def syncRoles(member, message, id):
 
     if nickName is not None:
         try:
-            await member.edit(nick=nickName)
-            log.info(f"{member}'s nickname was updated to: {nickName}.")
+            if member.nick != nickName:
+                await member.edit(nick=nickName)
+                log.info(f"{member}'s nickname was updated to: {nickName}.")
+            else:
+                await message.channel.send(f"{nickName}'s nickname is already up to date.")
+                log.info(f"{member}'s nickname was already up to date.")
+
         except discord.errors.Forbidden:
             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+
+    if newRoles is not None:
+        discordRoleList = []
+        currentRoleList = member.roles
+
+        for role in newRoles:
+            discordRoleList.append(discord.utils.get(member.guild.roles, id = int(role)))
+        
+        print(discordRoleList)
+
+        try:
+            for role in discordRoleList:
+                if role not in member.roles:
+                    await member.add_roles(role)
+
+            for role in currentRoleList:
+                if role not in discordRoleList:
+                    await member.remove_roles(role)
+
+        except:
+            log.error("An unknown error occurred.")
 
 
 # Event Handlers
@@ -150,7 +184,7 @@ async def on_message(message):
         return
 
     # Check if the user sent "!verify"
-    if user_message.lower() == "!verify" and channel == "testing":
+    if user_message.lower() == "!verify" and channel == "testing" or channel == "operations-chat":
         log.info(f"{username} used !verify in {channel} channel.")
         await verifyUser(message, username, user_id)
 
