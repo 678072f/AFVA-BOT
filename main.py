@@ -114,29 +114,44 @@ async def verifyUser(message, username, id):
             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 
+# Help menu function
 async def showHelpMenu(member, message):
     helpMessage = f"Hello {member}! Here are the available options:\n ``` !help: View this menu.\n !verify: Verify your account and obtain roles.\n !sync: Sync your discord roles with the website. ```"
 
     await message.channel.send(helpMessage)
 
 
+# Role Sync function
 async def syncRoles(member, message, id):
-    nickName, newRoles = BC.fetchUserInfo(id)
-    log.debug(f"Received {nickName} and {newRoles} roles.")
+    
+    try:
+        nickName, newRoles = BC.fetchUserInfo(id)
+        log.debug(f"Received {nickName} and {newRoles} roles.")
 
-    await message.channel.send(f"You have the following roles: {newRoles}")
+    except TypeError:
+        log.error("An error occurred! Check if the user is registered.")
+        await message.channel.send("There was an error! If you get this message again, please register using !verify.")
+        return
+
+    log.info(f"{member} has the following roles: {newRoles}")
 
     if nickName is not None:
         try:
             if member.nick != nickName:
                 await member.edit(nick=nickName)
                 log.info(f"{member}'s nickname was updated to: {nickName}.")
+                await member.channel.send(f"Your nickname was updated to {nickName}")
+                
             else:
                 await message.channel.send(f"{nickName}'s nickname is already up to date.")
                 log.info(f"{member}'s nickname was already up to date.")
 
         except discord.errors.Forbidden:
             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+
+    else:
+        log.error(f"{member}'s nickname returned None! Try registering!")
+        await message.channel.send(f"Your nickname was not found! Please register with '!verify' and try again!")
 
     if newRoles is not None:
         discordRoleList = []
@@ -156,8 +171,14 @@ async def syncRoles(member, message, id):
                 if role not in discordRoleList:
                     await member.remove_roles(role)
 
-        except:
-            log.error("An unknown error occurred.")
+        except TypeError:
+            log.error("An unknown error occurred!")
+
+
+# Unregistration function (staff only)
+async def unregisterUser(message, id):
+    BC.unregUser(id)
+    await message.channel.send(f"You have successfully unregistered {id}")
 
 
 # Event Handlers
@@ -166,11 +187,14 @@ async def on_ready():
     log.info("Logged in as a bot {0.user}".format(client))
     print("Logged in as a bot {0.user}".format(client))
 
+# Event for sending welcome message to users
 @client.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name="new-members")
-    await channel.send(f"Welcome to Air France/KLM Virtual Airlines, @{member}!\n This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing !verify in #verification, or type ?help? to see a list of options.")
+    embedJoin = channel.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, @{member}!", description="This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing !verify in #verification, or type ?help? to see a list of options.", color=0x000000)
+    await channel.send(embed=embedJoin)
 
+# Event for messages
 @client.event
 async def on_message(message):
     username = str(message.author).split("#")[0]
@@ -191,11 +215,13 @@ async def on_message(message):
     if user_message.lower() == "?help?":
         log.info(f"{member} used ?help?")
         await showHelpMenu(member, message)
-        
-
+    
     if user_message.lower() == "!sync":
         log.info(f"{member} used !sync.")
         await syncRoles(member, message, user_id)
+
+    if user_message.lower == "!unregister":
+        pass
 
 
 # Function to clear verification channel

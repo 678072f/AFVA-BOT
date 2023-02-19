@@ -9,6 +9,7 @@ import json
 
 # Global Constants
 verificationURL = 'https://dev.afva.net/discord_info.ws?id='
+unregURL = 'https://dev.afva.net/discord_unregister.ws?id='
 
 afvaStaffRoles = ["Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
 
@@ -115,6 +116,10 @@ def fetchUserInfo(id):
         print("Error! User not found. Please register your Discord account.")
 
         return None
+    
+
+def unregUser(id):
+    req = requests.get(f"{unregURL + str(id)}")
 
 # Test code
 # user = verifyUser('0995')

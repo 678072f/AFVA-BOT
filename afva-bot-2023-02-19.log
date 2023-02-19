@@ -1,0 +1,33 @@
+WARNING:2023-02-19 08:40:40,846:PyNaCl is not installed, voice will NOT be supported
+DEBUG:2023-02-19 08:40:40,846:on_ready has successfully been registered as an event
+DEBUG:2023-02-19 08:40:40,846:on_member_join has successfully been registered as an event
+DEBUG:2023-02-19 08:40:40,846:on_message has successfully been registered as an event
+DEBUG:2023-02-19 08:40:40,846:Using selector: KqueueSelector
+INFO:2023-02-19 08:40:40,846:logging in using static token
+INFO:2023-02-19 08:40:41,486:Shard ID None has connected to Gateway (Session ID: 620ddb68ca79516635ffbf6b0ba3f884).
+INFO:2023-02-19 08:40:43,501:Logged in as a bot AFVA-BOT#8057
+INFO:2023-02-19 08:40:49,263:jonathanpduhon#5792 used !sync.
+DEBUG:2023-02-19 08:40:49,271:Starting new HTTPS connection (1): dev.afva.net:443
+DEBUG:2023-02-19 08:40:49,571:https://dev.afva.net:443 "GET /discord_info.ws?id=5792 HTTP/1.1" 404 0
+ERROR:2023-02-19 08:40:49,574:An error occurred! Check if the user is registered.
+INFO:2023-02-19 08:51:14,772:jonathanpduhon used !verify in testing channel.
+INFO:2023-02-19 08:51:15,157:Sent verification link to jonathanpduhon.
+DEBUG:2023-02-19 08:51:48,214:Starting new HTTPS connection (1): dev.afva.net:443
+DEBUG:2023-02-19 08:51:48,534:https://dev.afva.net:443 "GET /discord_info.ws?id=5792 HTTP/1.1" 404 0
+ERROR:2023-02-19 08:51:48,732:Verification Error! jonathanpduhon#5792 is not registered.
+INFO:2023-02-19 08:51:54,189:jonathanpduhon used !verify in testing channel.
+INFO:2023-02-19 08:51:54,871:Sent verification link to jonathanpduhon.
+DEBUG:2023-02-19 08:52:15,844:Starting new HTTPS connection (1): dev.afva.net:443
+DEBUG:2023-02-19 08:52:16,191:https://dev.afva.net:443 "GET /discord_info.ws?id=5792 HTTP/1.1" 200 162
+DEBUG:2023-02-19 08:52:16,196:Received Jonathan Duhon - AFV1171 and [646368864187318302, 917498994098331659, 943237140270170182, 646467552259735562] roles.
+INFO:2023-02-19 08:52:16,197:You already have the @everyone role! Moving on...
+INFO:2023-02-19 08:52:16,203:You already have the Pilots role! Moving on...
+INFO:2023-02-19 08:52:16,216:You already have the First Officer role! Moving on...
+INFO:2023-02-19 08:52:16,223:You already have the B777-300 - Stage 4 role! Moving on...
+INFO:2023-02-19 08:52:16,602:User successfully verified.
+INFO:2023-02-19 08:52:16,772:jonathanpduhon#5792's nickname was updated to: Jonathan Duhon - AFV1171.
+INFO:2023-02-19 08:52:30,660:jonathanpduhon#5792 used !sync.
+DEBUG:2023-02-19 08:52:30,662:Starting new HTTPS connection (1): dev.afva.net:443
+DEBUG:2023-02-19 08:52:30,973:https://dev.afva.net:443 "GET /discord_info.ws?id=5792 HTTP/1.1" 200 162
+DEBUG:2023-02-19 08:52:30,975:Received Jonathan Duhon - AFV1171 and [646368864187318302, 917498994098331659, 943237140270170182, 646467552259735562] roles.
+INFO:2023-02-19 08:52:31,403:jonathanpduhon#5792's nickname was already up to date.
