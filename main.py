@@ -4,6 +4,7 @@
 # This example requires the 'message_content' intent.
 
 import discord
+from discord.ext import commands
 import os
 from dotenv import load_dotenv
 import botCommands as BC
@@ -16,7 +17,7 @@ import time
 # Global Constants
 load_dotenv()
 token = os.getenv('TOKEN')
-registrationURL = 'https://dev.afva.net/discordreg.do?id='
+registrationURL = 'https://www.afva.net/discordreg.do?id='
 currentTime = str(datetime.datetime.now()).split(' ')[0]
 
 # Set up Logging
@@ -32,31 +33,42 @@ intents = discord.Intents.all()
 intents.members = True
 client = discord.Client(intents=intents)
 
+bot = commands.Bot(command_prefix="$", intents=intents)
 
-# User verification funtion
-async def verifyUser(message, username, id):
-    member = message.author
+
+# Unregistration function (staff only)
+async def unregisterUser(message, id):
+    BC.unregUser(id)
+    await message.channel.send(f"You have successfully unregistered {id}")
+
+
+# User verification
+@bot.command(name="verify")
+async def verifyUser(ctx):
+    member = ctx.author
+    username = str(member).split("#")[0]
+    id = str(member).split("#")[1]
 
     # Respond to the user with a welcome message and send the verification link:
-    await message.channel.send(f"Hello {username}, I am sending you to the verification link.")
-    await message.channel.send(f'Please open: {registrationURL + id} to register your account, then react with 👍.')
+    await ctx.channel.send(f"Hello {username}, I am sending you to the verification link.")
+    await ctx.channel.send(f'Please open: {registrationURL + id} to register your account, then react with 👍 within 2 minutes. (If you get a timeout error, type $verify again and add the reaction).')
 
     log.info(f"Sent verification link to {username}.")
 
     # Define function to check for thumbsup reaction
     def check(reaction, user):
-        return user == message.author and str(reaction.emoji) == '👍'
+        return user == member and str(reaction.emoji) == '👍'
 
     try:
         # Check for the user's reaction
-        reaction, user = await client.wait_for('reaction_add', timeout=60.0, check=check)
+        reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)
         # Store the user's nickname and roles from the verification Function
         
         try:
             nickName, roleList = BC.fetchUserInfo(id)
             log.debug(f"Received {nickName} and {roleList} roles.")
         except TypeError:
-            await message.channel.send(f"Error! {member} is not registered.\nPlease use !verify again and register using the link provided.")
+            await ctx.channel.send(f"Error! {member} is not registered.\nPlease use !verify again and register using the link provided.")
             log.error(f"Verification Error! {member} is not registered.")
             return
 
@@ -96,14 +108,14 @@ async def verifyUser(message, username, id):
 
         # Respond with user's new nickname
         if nickName is not None:
-            await message.channel.send(f"Success! Hello {nickName}")
+            await ctx.channel.send(f"Success! Hello {nickName}")
             log.info('User successfully verified.')
 
     # Catch timeout
     except asyncio.TimeoutError:
         nickName = None
-        await message.channel.send('Timeout Error! Please try again.')
-        log.warning('Timeout Error! Please try again. User did not respond within 1 minute.')
+        await ctx.channel.send('Timeout Error! You did not react within 2 minutes. Please try again.')
+        log.warning('Timeout Error! Please try again. User did not respond within 2 minutes.')
 
     # Update Nickname
     if nickName is not None:
@@ -114,15 +126,13 @@ async def verifyUser(message, username, id):
             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 
-# Help menu function
-async def showHelpMenu(member, message):
-    helpMessage = f"Hello {member}! Here are the available options:\n ``` !help: View this menu.\n !verify: Verify your account and obtain roles.\n !sync: Sync your discord roles with the website. ```"
+# Role Sync
+@bot.command(name="sync")
+async def syncRoles(ctx, member: discord.Member):
+    if not member:
+        member = ctx.author
 
-    await message.channel.send(helpMessage)
-
-
-# Role Sync function
-async def syncRoles(member, message, id):
+    id = str(member).split("#")[1]
     
     try:
         nickName, newRoles = BC.fetchUserInfo(id)
@@ -130,7 +140,7 @@ async def syncRoles(member, message, id):
 
     except TypeError:
         log.error("An error occurred! Check if the user is registered.")
-        await message.channel.send("There was an error! If you get this message again, please register using !verify.")
+        await ctx.channel.send("There was an error! If you get this message again, please register using !verify.")
         return
 
     log.info(f"{member} has the following roles: {newRoles}")
@@ -143,7 +153,7 @@ async def syncRoles(member, message, id):
                 await member.channel.send(f"Your nickname was updated to {nickName}")
                 
             else:
-                await message.channel.send(f"{nickName}'s nickname is already up to date.")
+                await ctx.channel.send(f"{member.mention}'s nickname is already up to date.")
                 log.info(f"{member}'s nickname was already up to date.")
 
         except discord.errors.Forbidden:
@@ -151,11 +161,31 @@ async def syncRoles(member, message, id):
 
     else:
         log.error(f"{member}'s nickname returned None! Try registering!")
-        await message.channel.send(f"Your nickname was not found! Please register with '!verify' and try again!")
+        await ctx.channel.send(f"Your nickname was not found! Please register with '!verify' and try again!")
 
     if newRoles is not None:
         discordRoleList = []
         currentRoleList = member.roles
+       
+        for role in currentRoleList:
+            if role.id == BC.discordRoles["AFVA-Booster"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["AFVA-Shareholder"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["P1 - PPL"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["RW Pilot"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["CFI"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["DCFI"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["everyone"]:
+                currentRoleList.remove(role)
+            elif role.id == BC.discordRoles["Senior Captain"]:
+                currentRoleList.remove(role)
+        
+        print(str(currentRoleList))
 
         for role in newRoles:
             discordRoleList.append(discord.utils.get(member.guild.roles, id = int(role)))
@@ -169,64 +199,61 @@ async def syncRoles(member, message, id):
 
             for role in currentRoleList:
                 if role not in discordRoleList:
+                    await ctx.send(role)
                     await member.remove_roles(role)
 
         except TypeError:
             log.error("An unknown error occurred!")
 
-
-# Unregistration function (staff only)
-async def unregisterUser(message, id):
-    BC.unregUser(id)
-    await message.channel.send(f"You have successfully unregistered {id}")
-
-
 # Event Handlers
-@client.event
+@bot.event
 async def on_ready():
-    log.info("Logged in as a bot {0.user}".format(client))
-    print("Logged in as a bot {0.user}".format(client))
+    log.info("Logged in as a bot {0.user}".format(bot))
+    print("Logged in as a bot {0.user}".format(bot))
 
 # Event for sending welcome message to users
-@client.event
+@bot.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name="new-members")
     embedJoin = channel.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, @{member}!", description="This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing !verify in #verification, or type ?help? to see a list of options.", color=0x000000)
     await channel.send(embed=embedJoin)
 
 # Event for messages
-@client.event
-async def on_message(message):
-    username = str(message.author).split("#")[0]
-    user_id = str(message.author).split("#")[1]
-    member = message.author
-    channel = str(message.channel.name)
-    user_message = str(message.content)
+# @client.event
+# async def on_message(message):
+#     username = str(message.author).split("#")[0]
+#     user_id = str(message.author).split("#")[1]
+#     member = message.author
+#     channel = str(message.channel.name)
+#     user_message = str(message.content)
 
-    # Make sure that the bot only responds to users
-    if message.author == client.user:
-        return
+#     # Make sure that the bot only responds to users
+#     if message.author == client.user:
+#         return
 
-    # Check if the user sent "!verify"
-    if user_message.lower() == "!verify" and channel == "testing" or channel == "operations-chat":
-        log.info(f"{username} used !verify in {channel} channel.")
-        await verifyUser(message, username, user_id)
+#     # Check if the user sent "!verify"
+#     if user_message.lower() == "!verify" and channel == "testing" or channel == "operations-chat":
+#         log.info(f"{username} used !verify in {channel} channel.")
+#         await verifyUser(message, username, user_id)
 
-    if user_message.lower() == "?help?":
-        log.info(f"{member} used ?help?")
-        await showHelpMenu(member, message)
+#     if user_message.lower() == "?help?":
+#         log.info(f"{member} used ?help?")
+#         await showHelpMenu(member, message)
     
-    if user_message.lower() == "!sync":
-        log.info(f"{member} used !sync.")
-        await syncRoles(member, message, user_id)
+#     if user_message.lower() == "!sync":
+#         log.info(f"{member} used !sync.")
+#         await syncRoles(member, message, user_id)
 
-    if user_message.lower == "!unregister":
-        pass
+#     if user_message.lower == "!unregister":
+#         seniorStaff = BC.discordRoles["Senior Staff"]
+#         fleetStaff = BC.discordRoles["Fleet Staff"]
+#         if seniorStaff in member.roles or fleetStaff in member.roles:
+#             unregisterUser(user)
 
 
 # Function to clear verification channel
 async def clearChannel(channelToBeCleared):
-    channel = discord.utils.get(client.guild.text_channels, name=channelToBeCleared)
+    channel = discord.utils.get(bot.guild.text_channels, name=channelToBeCleared)
     try:
         await channel.purge()
         log.info(f"Clearing {channelToBeCleared}...")
@@ -240,4 +267,4 @@ verChannel = "verification"
 schedule.every().week.friday.at("23:59").do(clearChannel, verChannel)
 
 # Run the bot
-client.run(token)
+bot.run(token)

@@ -8,17 +8,21 @@ import json
 
 
 # Global Constants
-verificationURL = 'https://dev.afva.net/discord_info.ws?id='
-unregURL = 'https://dev.afva.net/discord_unregister.ws?id='
+verificationURL = 'https://www.afva.net/discord_info.ws?id='
+unregURL = 'https://www.afva.net/discord_unregister.ws?id='
 
 afvaStaffRoles = ["Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
 
 
 # Discord roles. Format: 'role': 'id'
 discordRoles = {
+    'AFVA-Booster': 793300706214936586,
+    'AFVA-Shareholder': 904015787126325309,
     'Senior Staff': 646449197469532172, 
     'Tour Guide': 1062420370268897334, 
     'Operations & Administrative Staff': 646449303677829126, 
+    'CFI': 1011661203816333442,
+    'DCFI': 1072558336651821197,
     'Fleet Staff': 646449250632466445, 
     'Events': 884657255046332426,
     'Instructors': 895322298649829396,
@@ -39,6 +43,7 @@ discordRoles = {
     'B737-800': 646467266493415444,
     'A320': 646467480872681483,
     'A220-3(CSeries)': 793282582316843038,
+    'P1 - PPL': 1010682355876376606,
     'RW Pilot': 907986804681113610,
     'Pilots': 917498994098331659,
     'New Pilot': 793313617343938601,
