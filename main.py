@@ -218,38 +218,6 @@ async def on_member_join(member):
     embedJoin = channel.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, @{member}!", description="This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing !verify in #verification, or type ?help? to see a list of options.", color=0x000000)
     await channel.send(embed=embedJoin)
 
-# Event for messages
-# @client.event
-# async def on_message(message):
-#     username = str(message.author).split("#")[0]
-#     user_id = str(message.author).split("#")[1]
-#     member = message.author
-#     channel = str(message.channel.name)
-#     user_message = str(message.content)
-
-#     # Make sure that the bot only responds to users
-#     if message.author == client.user:
-#         return
-
-#     # Check if the user sent "!verify"
-#     if user_message.lower() == "!verify" and channel == "testing" or channel == "operations-chat":
-#         log.info(f"{username} used !verify in {channel} channel.")
-#         await verifyUser(message, username, user_id)
-
-#     if user_message.lower() == "?help?":
-#         log.info(f"{member} used ?help?")
-#         await showHelpMenu(member, message)
-    
-#     if user_message.lower() == "!sync":
-#         log.info(f"{member} used !sync.")
-#         await syncRoles(member, message, user_id)
-
-#     if user_message.lower == "!unregister":
-#         seniorStaff = BC.discordRoles["Senior Staff"]
-#         fleetStaff = BC.discordRoles["Fleet Staff"]
-#         if seniorStaff in member.roles or fleetStaff in member.roles:
-#             unregisterUser(user)
-
 
 # Function to clear verification channel
 async def clearChannel(channelToBeCleared):
