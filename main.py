@@ -36,12 +36,6 @@ client = discord.Client(intents=intents)
 bot = commands.Bot(command_prefix="$", intents=intents)
 
 
-# Unregistration function (staff only)
-async def unregisterUser(message, id):
-    BC.unregUser(id)
-    await message.channel.send(f"You have successfully unregistered {id}")
-
-
 # User verification
 @bot.command(name="verify")
 async def verifyUser(ctx):
@@ -128,9 +122,9 @@ async def verifyUser(ctx):
 
 # Role Sync
 @bot.command(name="sync")
-async def syncRoles(ctx, member: discord.Member):
-    if not member:
-        member = ctx.author
+async def syncRoles(ctx, member: discord.Member=None):
+    if member is None:
+        member = ctx.message.author
 
     id = str(member).split("#")[1]
     
