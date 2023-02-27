@@ -164,7 +164,7 @@ async def syncRoles(ctx, member: discord.Member=None):
 
         ignoreRoles = []
         for roleID in ignoreRolesId:
-            ignoreRoles.append(ctx.guild.roles, id = roleID)
+            ignoreRoles.append(discord.utils.get(ctx.guild.roles, id = roleID))
 
         for role in newRoles:
             discordRoleList.append(discord.utils.get(member.guild.roles, id = role))
