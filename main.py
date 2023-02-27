@@ -160,31 +160,14 @@ async def syncRoles(ctx, member: discord.Member=None):
     if newRoles is not None:
         discordRoleList = []
         currentRoleList = member.roles
-       
-        for role in currentRoleList:
-            if role.id == BC.discordRoles["AFVA-Booster"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["AFVA-Shareholder"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["P1 - PPL"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["RW Pilot"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["CFI"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["DCFI"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["everyone"]:
-                currentRoleList.remove(role)
-            elif role.id == BC.discordRoles["Senior Captain"]:
-                currentRoleList.remove(role)
-        
-        print(str(currentRoleList))
+        ignoreRolesId = [BC.discordRoles["AFVA-Booster"], BC.discordRoles["AFVA-Shareholder"], BC.discordRoles["P1 - PPL"], BC.discordRoles["RW Pilot"], BC.discordRoles["CFI"], BC.discordRoles["DCFI"], BC.discordRoles["everyone"], BC.discordRoles["Senior Captain"]]
+
+        ignoreRoles = []
+        for roleID in ignoreRolesId:
+            ignoreRoles.append(ctx.guild.roles, id = roleID)
 
         for role in newRoles:
-            discordRoleList.append(discord.utils.get(member.guild.roles, id = int(role)))
-        
-        print(discordRoleList)
+            discordRoleList.append(discord.utils.get(member.guild.roles, id = role))
 
         try:
             for role in discordRoleList:
@@ -192,7 +175,7 @@ async def syncRoles(ctx, member: discord.Member=None):
                     await member.add_roles(role)
 
             for role in currentRoleList:
-                if role not in discordRoleList:
+                if role not in discordRoleList and role not in ignoreRoles:
                     await ctx.send(role)
                     await member.remove_roles(role)
 
