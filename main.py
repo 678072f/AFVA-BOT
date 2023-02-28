@@ -131,7 +131,9 @@ async def syncRoles(ctx, member: discord.Member=None):
     for role in ctx.author.roles:
         if role not in allowedRoles:
             member = ctx.author
-            ctx.send("Not allowed! Running on yourself.")
+            await ctx.send("Not allowed! Running on yourself.")
+        else:
+            break
 
     id = str(member).split("#")[1]
     
