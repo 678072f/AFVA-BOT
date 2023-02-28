@@ -126,7 +126,7 @@ async def syncRoles(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.message.author
     
-    allowedRoles = [discord.utils.get(member.guilds.roles, id = BC.discordRoles["Fleet Staff"]), discord.utils.get(member.guilds.roles, id = BC.discordRoles["Senior Staff"]), discord.utils.get(member.guilds.roles, id = BC.discordRoles["Operations & Administrative Staff"])]
+    allowedRoles = [discord.utils.get(member.guild.roles, id = BC.discordRoles["Fleet Staff"]), discord.utils.get(member.guilds.roles, id = BC.discordRoles["Senior Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Operations & Administrative Staff"])]
 
     for role in ctx.author.roles:
         if role not in allowedRoles:
