@@ -16,7 +16,7 @@ import time
 
 # Global Constants
 load_dotenv()
-token = os.getenv('DEV_TOKEN')
+token = os.getenv('TOKEN')
 registrationURL = 'https://www.afva.net/discordreg.do?id='
 currentTime = str(datetime.datetime.now()).split(' ')[0]
 
