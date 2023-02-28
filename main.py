@@ -7,8 +7,7 @@ import discord
 from discord.ext import commands
 import os
 from dotenv import load_dotenv
-#import botCommands as BC
-import bcTesting as BC
+import botCommands as BC
 import asyncio
 import logging as log
 import datetime
