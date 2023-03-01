@@ -130,6 +130,7 @@ async def syncRoles(ctx, member: discord.Member=None):
 
     for role in allowedRoles:
         if role in member.roles:
+            await ctx.send("Allowed")
             break
         else:
             member = ctx.author
