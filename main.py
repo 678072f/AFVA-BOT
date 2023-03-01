@@ -62,7 +62,7 @@ async def verifyUser(ctx):
             nickName, roleList = BC.fetchUserInfo(id)
             log.debug(f"Received {nickName} and {roleList} roles.")
         except TypeError:
-            await ctx.channel.send(f"Error! {member} is not registered.\nPlease use !verify again and register using the link provided.")
+            await ctx.channel.send(f"Error! {member} is not registered.\nPlease use $verify again and register using the link provided.")
             log.error(f"Verification Error! {member} is not registered.")
             return
 
@@ -143,7 +143,7 @@ async def syncRoles(ctx, member: discord.Member=None):
 
     except TypeError:
         log.error("An error occurred! Check if the user is registered.")
-        await ctx.channel.send("There was an error! If you get this message again, please register using !verify.")
+        await ctx.channel.send("There was an error! If you get this message again, please register using $verify.")
         return
 
     log.info(f"{member} has the following roles: {newRoles}")
@@ -164,7 +164,7 @@ async def syncRoles(ctx, member: discord.Member=None):
 
     else:
         log.error(f"{member}'s nickname returned None! Try registering!")
-        await ctx.channel.send(f"Your nickname was not found! Please register with '!verify' and try again!")
+        await ctx.channel.send(f"Your nickname was not found! Please register with '$verify' and try again!")
 
     if newRoles is not None:
         discordRoleList = []
@@ -201,7 +201,7 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name="new-members")
-    embedJoin = channel.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, @{member}!", description="This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing !verify in #verification, or type ?help? to see a list of options.", color=0x000000)
+    embedJoin = discord.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, @{member}!", description="This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing $verify in #verification, or type ?help? to see a list of options.", color=0x000000)
     await channel.send(embed=embedJoin)
 
 
