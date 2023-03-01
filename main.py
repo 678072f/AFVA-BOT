@@ -124,12 +124,12 @@ async def verifyUser(ctx):
 @bot.command(name="sync")
 async def syncRoles(ctx, member: discord.Member=None):
     if member is None:
-        member = ctx.message.author
+        member = ctx.author
     
     allowedRoles = [discord.utils.get(member.guild.roles, id = BC.discordRoles["Fleet Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Senior Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Operations & Administrative Staff"])]
 
     for role in allowedRoles:
-        if role in member.roles:
+        if role not in member.roles:
             await ctx.send("Allowed")
             break
         else:
