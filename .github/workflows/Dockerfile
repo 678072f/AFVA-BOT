@@ -2,7 +2,7 @@
 
 FROM python:3.10
 
-ADD main.py ../main.py
+ADD main.py .
 
 RUN pip3 install requests discord schedule python-dotenv
 
