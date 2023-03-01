@@ -121,7 +121,7 @@ async def verifyUser(ctx):
 
 
 # Role Sync
-@bot.command(name="sync")
+@bot.command(name="sync", description="Sync roles with website")
 async def syncRoles(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.author
@@ -179,13 +179,14 @@ async def syncRoles(ctx, member: discord.Member=None):
             discordRoleList.append(discord.utils.get(member.guild.roles, id = role))
 
         try:
+            # Add new roles
             for role in discordRoleList:
                 if role not in member.roles:
                     await member.add_roles(role)
 
+            # Remove old roles
             for role in currentRoleList:
                 if role not in discordRoleList and role not in ignoreRoles:
-                    await ctx.send(role)
                     await member.remove_roles(role)
 
         except TypeError:
