@@ -37,7 +37,7 @@ bot = commands.Bot(command_prefix="$", intents=intents)
 
 
 # User verification
-@bot.command(name="verify")
+@bot.command(name="verify", decsription="Verify user with server")
 async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
@@ -201,7 +201,7 @@ async def on_ready():
 @bot.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name="new-members")
-    embedJoin = discord.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, @{member}!", description="This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing $verify in #verification, or type ?help? to see a list of options.", color=0x000000)
+    embedJoin = discord.Embed(title=f"Welcome to Air France/KLM Virtual Airlines!", description=f"@{member} This is a place for AFVA Members to get together and chat about our experiences and help each other.\n\n Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing $verify in #verification, or type ?help? to see a list of options.", color=0x000000)
     await channel.send(embed=embedJoin)
 
 
