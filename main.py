@@ -129,10 +129,13 @@ async def syncRoles(ctx, member: discord.Member=None):
     allowedRoles = [discord.utils.get(member.guild.roles, id = BC.discordRoles["Fleet Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Senior Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Operations & Administrative Staff"])]
 
     for role in allowedRoles:
+        print(role)
         if role not in member.roles:
+            print(role)
             await ctx.send("Allowed")
             break
         else:
+            print(role)
             member = ctx.author
             await ctx.send("Not allowed! Running on yourself.")
 
