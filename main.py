@@ -13,6 +13,7 @@ import logging as log
 import datetime
 import schedule
 import time
+import help
 
 # Global Constants
 load_dotenv()
@@ -37,7 +38,7 @@ bot = commands.Bot(command_prefix="$", intents=intents)
 
 
 # User verification
-@bot.command(name="verify", decsription="Verify user with server")
+@bot.command(name="verify")
 async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
@@ -121,7 +122,7 @@ async def verifyUser(ctx):
 
 
 # Role Sync
-@bot.command(name="sync", description="Sync roles with website")
+@bot.command(name="sync")
 async def syncRoles(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.author
@@ -191,6 +192,9 @@ async def syncRoles(ctx, member: discord.Member=None):
 
         except TypeError:
             log.error("An unknown error occurred!")
+
+# Setup Help Command
+help.setup(bot)
 
 # Event Handlers
 @bot.event
