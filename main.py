@@ -132,7 +132,7 @@ async def syncRoles(ctx, member: discord.Member=None):
 
     for role in allowedRoles:
         print(role)
-        if role not in member.roles:
+        if role in ctx.author.roles:
             print(role)
             await ctx.send("Allowed")
             break
