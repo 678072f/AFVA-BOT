@@ -36,7 +36,6 @@ client = discord.Client(intents=intents)
 
 bot = commands.Bot(command_prefix="$", intents=intents)
 
-
 # User verification
 @bot.command(name="verify")
 async def verifyUser(ctx):
