@@ -11,7 +11,30 @@ import json
 verificationURL = 'https://www.afva.net/discord_info.ws?id='
 unregURL = 'https://www.afva.net/discord_unregister.ws?id='
 
-afvaStaffRoles = ["Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
+afvaStaffRoles = [
+    "Fleet",
+    "HireMgr",
+    "Instructor",
+    "Charts",
+    "Developer",
+    "Dispatch",
+    "HR",
+    "Admin",
+    "PIREP",
+    "NOTAM",
+    "Senior Staff",
+    "Moderator",
+    "Tech",
+    "TestAdmin",
+    "AcademyAdmin",
+    "News",
+    "Schedule",
+    "Signature",
+    "Event",
+    "Operations",
+    "Examination",
+    "Route"
+]
 
 
 # Discord roles. Format: 'role': 'id'
@@ -51,10 +74,28 @@ discordRoles = {
 }
 
 # Available Ranks
-afvaRanks = ["First Officer", "Captain", "Senior Captain", "Assistant Chief Pilot", "Chief Pilot"]
+afvaRanks = [
+    "First Officer", 
+    "Captain", 
+    "Senior Captain", 
+    "Assistant Chief Pilot", 
+    "Chief Pilot"
+]
 
 # Equipment Programs
-afvaPrograms = ["A220-3(CSeries)", "A320", "B737-800", "A330-200", "B787-9", "DC-3", "A350-900", "B747-400", "B777-300", "A380-800", "Concorde"]
+afvaPrograms = [
+    "A220-3(CSeries)", 
+    "A320", 
+    "B737-800", 
+    "A330-200", 
+    "B787-9", 
+    "DC-3", 
+    "A350-900", 
+    "B747-400", 
+    "B777-300", 
+    "A380-800", 
+    "Concorde"
+]
 
 
 # Check username
