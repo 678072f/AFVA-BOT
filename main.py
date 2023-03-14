@@ -36,6 +36,7 @@ client = discord.Client(intents=intents)
 
 bot = commands.Bot(command_prefix="$", intents=intents)
 
+
 # User verification
 @bot.command(name="verify")
 async def verifyUser(ctx):
@@ -192,14 +193,17 @@ async def syncRoles(ctx, member: discord.Member=None):
         except TypeError:
             log.error("An unknown error occurred!")
 
+
 # Setup Help Command
 help.setup(bot)
+
 
 # Event Handlers
 @bot.event
 async def on_ready():
     log.info("Logged in as a bot {0.user}".format(bot))
     print("Logged in as a bot {0.user}".format(bot))
+
 
 # Event for sending welcome message to users
 @bot.event
@@ -210,13 +214,14 @@ async def on_member_join(member):
 
 
 # Function to clear verification channel
-async def clearChannel(channelToBeCleared):
+def clearChannel(channelToBeCleared):
     channel = discord.utils.get(bot.guild.text_channels, name=channelToBeCleared)
     try:
-        await channel.purge()
+        channel.purge()
         log.info(f"Clearing {channelToBeCleared}...")
     except:
         log.error(f"An error occurred when trying to clear {channelToBeCleared}!")
+
 
 # Verification channel name
 verChannel = "verification"
