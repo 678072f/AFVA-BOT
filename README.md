@@ -18,7 +18,7 @@ https://www.afva.net/
 # Future Plans
 
 ~~- Add !sync command, capability, and schedule.~~
-    ~~~- Look into what is needed to allow staff members to run this on behalf of someone else.~~~
+    ~~- Look into what is needed to allow staff members to run this on behalf of someone else.~~
 - Add Feature to post announcements from the website using a webhook (may need input from site).
 - Add feature to detect and announce pilot promotions (like the automated ones in the Forums on the website).
 - Add feature to share ACARS flight status messages in a "dispatch" channel.
