@@ -43,6 +43,7 @@ async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
     id = str(member).split("#")[1]
+    reactionList = ['👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿']
 
     # Respond to the user with a welcome message and send the verification link:
     await ctx.channel.send(f"Hello {username}, I am sending you to the verification link.")
@@ -52,7 +53,13 @@ async def verifyUser(ctx):
 
     # Define function to check for thumbsup reaction
     def check(reaction, user):
-        return user == member and str(reaction.emoji) == '👍'
+        react = None
+        for i in reactionList:
+            if str(reaction.emoji) == i:
+                react = i
+                break
+            
+        return user == member and str(reaction.emoji) == react
 
     try:
         # Check for the user's reaction
@@ -193,14 +200,17 @@ async def syncRoles(ctx, member: discord.Member=None):
         except TypeError:
             log.error("An unknown error occurred!")
 
+
 # Setup Help Command
 help.setup(bot)
+
 
 # Event Handlers
 @bot.event
 async def on_ready():
     log.info("Logged in as a bot {0.user}".format(bot))
     print("Logged in as a bot {0.user}".format(bot))
+
 
 # Event for sending welcome message to users
 @bot.event
@@ -211,13 +221,14 @@ async def on_member_join(member):
 
 
 # Function to clear verification channel
-async def clearChannel(channelToBeCleared):
+def clearChannel(channelToBeCleared):
     channel = discord.utils.get(bot.guild.text_channels, name=channelToBeCleared)
     try:
-        await channel.purge()
+        channel.purge()
         log.info(f"Clearing {channelToBeCleared}...")
     except:
         log.error(f"An error occurred when trying to clear {channelToBeCleared}!")
+
 
 # Verification channel name
 verChannel = "verification"

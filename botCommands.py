@@ -11,7 +11,30 @@ import json
 verificationURL = 'https://www.afva.net/discord_info.ws?id='
 unregURL = 'https://www.afva.net/discord_unregister.ws?id='
 
-afvaStaffRoles = ["Fleet","HireMgr","Instructor","Charts","Developer","Dispatch","HR","Admin","PIREP","NOTAM","Senior Staff","Moderator","Tech","TestAdmin","AcademyAdmin","News","Schedule","Signature","Event","Operations","Examination","Route"]
+afvaStaffRoles = [
+    "Fleet",
+    "HireMgr",
+    "Instructor",
+    "Charts",
+    "Developer",
+    "Dispatch",
+    "HR",
+    "Admin",
+    "PIREP",
+    "NOTAM",
+    "Senior Staff",
+    "Moderator",
+    "Tech",
+    "TestAdmin",
+    "AcademyAdmin",
+    "News",
+    "Schedule",
+    "Signature",
+    "Event",
+    "Operations",
+    "Examination",
+    "Route"
+]
 
 
 # Discord roles. Format: 'role': 'id'
@@ -51,10 +74,38 @@ discordRoles = {
 }
 
 # Available Ranks
-afvaRanks = ["First Officer", "Captain", "Senior Captain", "Assistant Chief Pilot", "Chief Pilot"]
+afvaRanks = [
+    "First Officer", 
+    "Captain", 
+    "Senior Captain", 
+    "Assistant Chief Pilot", 
+    "Chief Pilot"
+]
 
 # Equipment Programs
-afvaPrograms = ["A220-3(CSeries)", "A320", "B737-800", "A330-200", "B787-9", "DC-3", "A350-900", "B747-400", "B777-300", "A380-800", "Concorde"]
+afvaPrograms = [
+    "A220-3(CSeries)", 
+    "A320", 
+    "B737-800", 
+    "A330-200", 
+    "B787-9", 
+    "DC-3", 
+    "A350-900", 
+    "B747-400", 
+    "B777-300", 
+    "A380-800", 
+    "Concorde"
+]
+
+
+# Check username
+def usernameLength(name, id):
+    if len(name + ' - ' + id) < 29:
+        return name + ' - ' + id
+    elif len(name + ' - ' + id) >= 29 and len(name + ' - ' + id) < 32:
+        return name + '-' + id
+    else:
+        return name + id
 
 
 # Set User's roles based on security roles, rank, and equipment program
@@ -99,13 +150,15 @@ def fetchUserInfo(id):
             return None
 
         # Separate data into useable strings
-        pilotID = jsonData["pilotCode"]
+        pilotID = jsonData['pilotCode']
         
+        name = f"{jsonData['firstName']} {jsonData['lastName']}"
+
         # Check if the user has a Pilot ID
         if pilotID:
-            nickName = f'{jsonData["firstName"]} {jsonData["lastName"]} - {pilotID}'
+            nickName = usernameLength(name, pilotID)
         else:
-            nickName = f"{jsonData['firstName']} {jsonData['lastName']} - NEW PILOT"
+            nickName = usernameLength(name, "NEW PILOT")
 
         roles = jsonData["roles"]
         rank = jsonData["rank"]
