@@ -2,6 +2,9 @@
 
 This is a Discord Bot for Air France/KLM Virtual Airlines.
 
+This Discord bot is intended only for Air France/KLM Virtual Airlines.
+For questions or inquiries, please contact info@afva.net
+
 https://www.afva.net/
 
 # Capabilities
@@ -13,7 +16,7 @@ https://www.afva.net/
 - Allows users to use a $sync command to update their roles.
 - Handles cases where someone tries to use certain commands before registration.
 
-* - Not yet tested.
+\* - Not yet tested.
 
 # Future Plans
 
