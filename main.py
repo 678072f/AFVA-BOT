@@ -43,6 +43,7 @@ async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
     id = str(member).split("#")[1]
+    reactionList = ['👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿']
 
     # Respond to the user with a welcome message and send the verification link:
     await ctx.channel.send(f"Hello {username}, I am sending you to the verification link.")
@@ -52,7 +53,13 @@ async def verifyUser(ctx):
 
     # Define function to check for thumbsup reaction
     def check(reaction, user):
-        return user == member and str(reaction.emoji) == '👍'
+        react = None
+        for i in reactionList:
+            if str(reaction.emoji) == i:
+                react = i
+                break
+            
+        return user == member and str(reaction.emoji) == react
 
     try:
         # Check for the user's reaction
