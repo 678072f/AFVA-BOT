@@ -5,11 +5,11 @@
 
 import requests
 import json
-
+import os
 
 # Global Constants
-verificationURL = 'https://www.afva.net/discord_info.ws?id='
-unregURL = 'https://www.afva.net/discord_unregister.ws?id='
+verificationURL = os.getenv('INFO_URL')
+unregURL = os.getenv('UNREG_URL')
 
 afvaStaffRoles = [
     "Fleet",

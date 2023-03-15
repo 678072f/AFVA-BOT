@@ -6,7 +6,6 @@
 import discord
 from discord.ext import commands
 import os
-from dotenv import load_dotenv
 import botCommands as BC
 import asyncio
 import logging as log
@@ -16,9 +15,8 @@ import time
 import help
 
 # Global Constants
-load_dotenv()
 token = os.getenv('TOKEN')
-registrationURL = 'https://www.afva.net/discordreg.do?id='
+registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
 
 # Set up Logging
