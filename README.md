@@ -13,7 +13,7 @@ https://www.afva.net/
 - Allows users to use a $sync command to update their roles.
 - Handles cases where someone tries to use certain commands before registration.
 
-* - Not yet tested.
+\* - Not yet tested.
 
 # Future Plans
 
