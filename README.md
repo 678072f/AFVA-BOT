@@ -2,6 +2,9 @@
 
 This is a Discord Bot for Air France/KLM Virtual Airlines.
 
+This Discord bot is intended only for Air France/KLM Virtual Airlines.
+For questions or inquiries, please contact info@afva.net
+
 https://www.afva.net/
 
 # Capabilities
