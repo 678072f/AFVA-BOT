@@ -13,11 +13,20 @@ import datetime
 import schedule
 import time
 import help
+import dotenv
 
 # Global Constants
+dotenv.load_dotenv()
 token = os.getenv('TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
+
+helpText = [
+    "Use this account to register your discord account with your AFVA profile.\nUsage: '$verify' - You MUST react to the message contaning the link with :thumbsup:",
+    "Use this command to sync your roles with your AFVA Profile.\nUsage: '$sync [OPTIONAL: @<member>]' (Only staff may update other users).",
+    "Use this function to view the log (IT only).\nUsage: '$log'",
+    "Use this function to unregister the user.\nUsage: '$unregister [OPTIONAL: @<member>]' (Only staff may unregister other users)."
+]
 
 # Set up Logging
 log.basicConfig(
@@ -33,10 +42,10 @@ intents.members = True
 client = discord.Client(intents=intents)
 
 bot = commands.Bot(command_prefix="$", intents=intents)
-
+bot.remove_command('help')
 
 # User verification
-@bot.command(name="verify")
+@bot.command(name="verify", help=helpText[0])
 async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
@@ -127,7 +136,7 @@ async def verifyUser(ctx):
 
 
 # Role Sync, fetches data from server and compares to current roles and nickName
-@bot.command(name="sync")
+@bot.command(name="sync", help=helpText[1])
 async def syncRoles(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.author
@@ -196,7 +205,7 @@ async def syncRoles(ctx, member: discord.Member=None):
 
 
 # Reads current log file and outputs it as a message
-@bot.command(name="log")
+@bot.command(name="log", help=helpText[2])
 async def viewLog(ctx, member: discord.Member=None):
     member = ctx.author
     currentLog = BC.displayLog()
@@ -214,7 +223,7 @@ async def viewLog(ctx, member: discord.Member=None):
 
 
 # Unregisters user by sending a GET request to the unregister URI
-@bot.command(name="unregister")
+@bot.command(name="unregister", help=helpText[3])
 async def unregUser(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.author
@@ -228,7 +237,7 @@ async def unregUser(ctx, member: discord.Member=None):
 
 
 # Setup Help Command
-help.setup(bot)
+asyncio.run(help.setup(bot))
 
 
 # Event Handlers

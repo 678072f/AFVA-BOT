@@ -40,7 +40,7 @@ class Help(commands.Cog):
                 owner = owner
 
             # Build Embed
-            EMBED = discord.Embed(title='Commands and modules', color=discord.Color.blue(), description = f"Use `{prefix}help <module>` to see more information about that module\n")
+            EMBED = discord.Embed(title='Commands and modules', color=discord.Color.blue(), description = f"Available commands and corrct usage. Use `{prefix}help <module>` to see more information about that module (NOTE that this does not work yet).\n")
 
             # Iterate through COGS
             cogs_desc = ''
@@ -54,7 +54,7 @@ class Help(commands.Cog):
             commands_desc = ''
             for command in self.bot.walk_commands():
                 if not command.cog_name and not command.hidden:
-                    commands_desc += f'{command.name} - {command.help}\n'
+                    commands_desc += f'```{command.name}: {command.help}```\n'
             
             # Add commands to embed
             if commands_desc:
@@ -88,5 +88,5 @@ class Help(commands.Cog):
 
         await sendEmbed(ctx, EMBED)
 
-def setup(bot):
-    bot.add_cog(Help(bot))
+async def setup(bot):
+    await bot.add_cog(Help(bot))
