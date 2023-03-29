@@ -15,6 +15,8 @@ https://www.afva.net/
 - Clears #verification channel weekly on Fridays at 23:59.*
 - Allows users to use a $sync command to update their roles.
 - Handles cases where someone tries to use certain commands before registration.
+- Allows IT Staff to view Log within Discord
+- Allows Staff to sync and unregister users
 
 \* - Not yet tested.
 
