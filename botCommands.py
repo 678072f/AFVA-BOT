@@ -6,10 +6,10 @@
 import requests
 import json
 import os
-# import dotenv # DEV ONLY
+import dotenv # DEV ONLY
 
 # Global Constants
-# dotenv.load_dotenv() # DEV ONLY
+dotenv.load_dotenv() # DEV ONLY
 verificationURL = os.getenv('INFO_URL')
 unregURL = os.getenv('UNREG_URL')
 
@@ -188,10 +188,3 @@ def displayLog():
     currLog = logFiles[-1]
 
     return currLog
-
-# Test code
-# user = verifyUser('0995')
-
-# # verifyUser('2563')
-
-# print(user[1])

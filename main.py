@@ -1,4 +1,4 @@
-# AFVA Bot Version 1.0
+# AFVA Bot Version 1.0.1
 # By: Daniel Duhon
 
 # This example requires the 'message_content' intent.
@@ -12,20 +12,17 @@ import logging as log
 import datetime
 import schedule
 import time
-import help
-# import dotenv # DEV ONLY
+import dotenv # DEV ONLY
 
 # Global Constants
-# dotenv.load_dotenv() # DEV ONLY
+dotenv.load_dotenv() # DEV ONLY
 token = os.getenv('TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
 
 helpText = [
     "Use this account to register your discord account with your AFVA profile.\nUsage: '$verify' - You MUST react to the message contaning the link with :thumbsup:",
-    "Use this command to sync your roles with your AFVA Profile.\nUsage: '$sync [OPTIONAL: @<member>]' (Only staff may update other users).",
-    "Use this function to view the log (IT only).\nUsage: '$log'",
-    "Use this function to unregister the user.\nUsage: '$unregister [OPTIONAL: @<member>]' (Only staff may unregister other users)."
+    "Use this function to view the log (IT only).\nUsage: '$log'"
 ]
 
 # Set up Logging
@@ -39,13 +36,18 @@ log.basicConfig(
 # Setup Discord
 intents = discord.Intents.all()
 intents.members = True
-client = discord.Client(intents=intents)
 
-bot = commands.Bot(command_prefix="$", intents=intents)
-bot.remove_command('help')
+client = commands.Bot(command_prefix="$", intents=intents)
+client.remove_command('help')
+
+# Load Cogs
+async def load_extensions():
+    for filename in os.listdir('./cogs'):
+        if filename.endswith('.py'):
+            await client.load_extension(f"cogs.{filename[:-3]}")
 
 # User verification
-@bot.command(name="verify", help=helpText[0])
+@client.command(name="verify1", help=helpText[0])
 async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
@@ -136,76 +138,76 @@ async def verifyUser(ctx):
 
 
 # Role Sync, fetches data from server and compares to current roles and nickName
-@bot.command(name="sync", help=helpText[1])
-async def syncRoles(ctx, member: discord.Member=None):
-    if member is None:
-        member = ctx.author
+# @client.command(name="sync", help=helpText[1])
+# async def syncRoles(ctx, member: discord.Member=None):
+#     if member is None:
+#         member = ctx.author
     
-    allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
+#     allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
 
-    if not any(role in ctx.author.roles for role in allowedRoles):
-        member = ctx.author
+#     if not any(role in ctx.author.roles for role in allowedRoles):
+#         member = ctx.author
 
-    id = str(member).split("#")[1]
+#     id = str(member).split("#")[1]
     
-    try:
-        nickName, newRoles = BC.fetchUserInfo(id)
-        log.debug(f"Received {nickName} and {newRoles} roles.")
+#     try:
+#         nickName, newRoles = BC.fetchUserInfo(id)
+#         log.debug(f"Received {nickName} and {newRoles} roles.")
 
-    except TypeError:
-        log.error("An error occurred! Check if the user is registered.")
-        await ctx.channel.send("There was an error! If you get this message again, please register using $verify.")
-        return
+#     except TypeError:
+#         log.error("An error occurred! Check if the user is registered.")
+#         await ctx.channel.send("There was an error! If you get this message again, please register using $verify.")
+#         return
 
-    log.info(f"{member} has the following roles: {newRoles}")
+#     log.info(f"{member} has the following roles: {newRoles}")
 
-    if nickName is not None:
-        try:
-            if member.nick != nickName:
-                await member.edit(nick=nickName)
-                log.info(f"{member}'s nickname was updated to: {nickName}.")
-                await member.channel.send(f"Your nickname was updated to {nickName}")
+#     if nickName is not None:
+#         try:
+#             if member.nick != nickName:
+#                 await member.edit(nick=nickName)
+#                 log.info(f"{member}'s nickname was updated to: {nickName}.")
+#                 await member.channel.send(f"Your nickname was updated to {nickName}")
                 
-            else:
-                await ctx.channel.send(f"{member.mention}'s nickname is already up to date.")
-                log.info(f"{member}'s nickname was already up to date.")
+#             else:
+#                 await ctx.channel.send(f"{member.mention}'s nickname is already up to date.")
+#                 log.info(f"{member}'s nickname was already up to date.")
 
-        except discord.errors.Forbidden:
-            log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+#         except discord.errors.Forbidden:
+#             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
-    else:
-        log.error(f"{member}'s nickname returned None! Try registering!")
-        await ctx.channel.send(f"Your nickname was not found! Please register with '$verify' and try again!")
+#     else:
+#         log.error(f"{member}'s nickname returned None! Try registering!")
+#         await ctx.channel.send(f"Your nickname was not found! Please register with '$verify' and try again!")
 
-    if newRoles is not None:
-        discordRoleList = []
-        currentRoleList = member.roles
-        ignoreRolesId = [BC.discordRoles["AFVA-Booster"], BC.discordRoles["AFVA-Shareholder"], BC.discordRoles["P1 - PPL"], BC.discordRoles["RW Pilot"], BC.discordRoles["CFI"], BC.discordRoles["DCFI"], BC.discordRoles["everyone"], BC.discordRoles["Senior Captain"], BC.discordRoles["Senior Staff"]]
+#     if newRoles is not None:
+#         discordRoleList = []
+#         currentRoleList = member.roles
+#         ignoreRolesId = [BC.discordRoles["AFVA-Booster"], BC.discordRoles["AFVA-Shareholder"], BC.discordRoles["P1 - PPL"], BC.discordRoles["RW Pilot"], BC.discordRoles["CFI"], BC.discordRoles["DCFI"], BC.discordRoles["everyone"], BC.discordRoles["Senior Captain"], BC.discordRoles["Senior Staff"]]
 
-        ignoreRoles = []
-        for roleID in ignoreRolesId:
-            ignoreRoles.append(discord.utils.get(member.guild.roles, id = roleID))
+#         ignoreRoles = []
+#         for roleID in ignoreRolesId:
+#             ignoreRoles.append(discord.utils.get(member.guild.roles, id = roleID))
 
-        for role in newRoles:
-            discordRoleList.append(discord.utils.get(member.guild.roles, id = role))
+#         for role in newRoles:
+#             discordRoleList.append(discord.utils.get(member.guild.roles, id = role))
 
-        try:
-            # Add new roles
-            for role in discordRoleList:
-                if role not in member.roles:
-                    await member.add_roles(role)
+#         try:
+#             # Add new roles
+#             for role in discordRoleList:
+#                 if role not in member.roles:
+#                     await member.add_roles(role)
 
-            # Remove old roles
-            for role in currentRoleList:
-                if role not in discordRoleList and role not in ignoreRoles:
-                    await member.remove_roles(role)
+#             # Remove old roles
+#             for role in currentRoleList:
+#                 if role not in discordRoleList and role not in ignoreRoles:
+#                     await member.remove_roles(role)
 
-        except TypeError:
-            log.error("An unknown error occurred!")
+#         except TypeError:
+#             log.error("An unknown error occurred!")
 
 
 # Reads current log file and outputs it as a message
-@bot.command(name="log", help=helpText[2])
+@client.command(name="log", help=helpText[1])
 async def viewLog(ctx, member: discord.Member=None):
     member = ctx.author
     currentLog = BC.displayLog()
@@ -222,33 +224,29 @@ async def viewLog(ctx, member: discord.Member=None):
             break
 
 
-# Unregisters user by sending a GET request to the unregister URI
-@bot.command(name="unregister", help=helpText[3])
-async def unregUser(ctx, member: discord.Member=None):
-    if member is None:
-        member = ctx.author
+# # Unregisters user by sending a GET request to the unregister URI
+# @bot.command(name="unregister", help=helpText[3])
+# async def unregUser(ctx, member: discord.Member=None):
+#     if member is None:
+#         member = ctx.author
 
-    allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
+#     allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
 
-    if not any(role in ctx.author.roles for role in allowedRoles):
-        member = ctx.author
+#     if not any(role in ctx.author.roles for role in allowedRoles):
+#         member = ctx.author
     
-    BC.unregUser(member.id)
-
-
-# Setup Help Command
-asyncio.run(help.setup(bot))
+#     BC.unregUser(member.id)
 
 
 # Event Handlers
-@bot.event
+@client.event
 async def on_ready():
-    log.info("Logged in as a bot {0.user}".format(bot))
-    print("Logged in as a bot {0.user}".format(bot))
+    log.info("Logged in as a bot {0.user}".format(client))
+    print("Logged in as a bot {0.user}".format(client))
 
 
 # Event for sending welcome message to users
-@bot.event
+@client.event
 async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name="new-members")
     embedJoin = discord.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, {member.mention}! :flag_fr: :flag_fr:", description=f"Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing `$verify` in #verification, or type `$help` to see a list of options.", color=0x0b228c)
@@ -257,7 +255,7 @@ async def on_member_join(member):
 
 # Function to clear verification channel
 def clearChannel(channelToBeCleared):
-    channel = discord.utils.get(bot.guild.text_channels, name=channelToBeCleared)
+    channel = discord.utils.get(client.guild.text_channels, name=channelToBeCleared)
     try:
         channel.purge()
         log.info(f"Clearing {channelToBeCleared}...")
@@ -271,5 +269,11 @@ verChannel = "verification"
 # Clear the channel every friday at 23:59
 schedule.every().week.friday.at("23:59").do(clearChannel, verChannel)
 
+# Setup Main Function
+async def main():
+    async with client:
+        await load_extensions()
+        await client.start(token)
+
 # Run the bot
-bot.run(token)
+asyncio.run(main())

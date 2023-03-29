@@ -1,4 +1,5 @@
 import discord
+import asyncio
 from discord.ext import commands
 from discord.errors import Forbidden
 
@@ -11,7 +12,7 @@ async def sendEmbed(ctx, emb):
             await ctx.send("I don't have permission to embed. Please have @IT check bot permisssions.")
         except Forbidden:
             await ctx.author.send(
-                f"Hey @{ctx.author}, I don't have permission to send messages in {ctx.channel.name} on {ctx.guild.name}\n"
+                f"Hey {ctx.author.mention}, I don't have permission to send messages in {ctx.channel.name} on {ctx.guild.name}\n"
                 f"Please inform info@afva.net about this issue and we will resolve it as soon as possible! :slight_smile: ", embed=emb
             )
 
