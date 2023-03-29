@@ -13,10 +13,10 @@ import datetime
 import schedule
 import time
 import help
-import dotenv
+# import dotenv # DEV ONLY
 
 # Global Constants
-dotenv.load_dotenv()
+# dotenv.load_dotenv() # DEV ONLY
 token = os.getenv('TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]

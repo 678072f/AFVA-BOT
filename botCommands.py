@@ -6,10 +6,10 @@
 import requests
 import json
 import os
-import dotenv
+# import dotenv # DEV ONLY
 
 # Global Constants
-dotenv.load_dotenv()
+# dotenv.load_dotenv() # DEV ONLY
 verificationURL = os.getenv('INFO_URL')
 unregURL = os.getenv('UNREG_URL')
 
