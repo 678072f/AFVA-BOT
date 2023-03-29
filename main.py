@@ -13,11 +13,20 @@ import datetime
 import schedule
 import time
 import help
+# import dotenv # DEV ONLY
 
 # Global Constants
+# dotenv.load_dotenv() # DEV ONLY
 token = os.getenv('TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
+
+helpText = [
+    "Use this account to register your discord account with your AFVA profile.\nUsage: '$verify' - You MUST react to the message contaning the link with :thumbsup:",
+    "Use this command to sync your roles with your AFVA Profile.\nUsage: '$sync [OPTIONAL: @<member>]' (Only staff may update other users).",
+    "Use this function to view the log (IT only).\nUsage: '$log'",
+    "Use this function to unregister the user.\nUsage: '$unregister [OPTIONAL: @<member>]' (Only staff may unregister other users)."
+]
 
 # Set up Logging
 log.basicConfig(
@@ -33,19 +42,19 @@ intents.members = True
 client = discord.Client(intents=intents)
 
 bot = commands.Bot(command_prefix="$", intents=intents)
-
+bot.remove_command('help')
 
 # User verification
-@bot.command(name="verify")
+@bot.command(name="verify", help=helpText[0])
 async def verifyUser(ctx):
     member = ctx.author
     username = str(member).split("#")[0]
-    id = str(member).split("#")[1]
+    id = str(member).split('#')[1]
     reactionList = ['👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿']
 
     # Respond to the user with a welcome message and send the verification link:
     await ctx.channel.send(f"Hello {username}, I am sending you to the verification link.")
-    await ctx.channel.send(f'Please open: {registrationURL + id} to register your account, then react with 👍 within 2 minutes. (If you get a timeout error, type $verify again and add the reaction).')
+    await ctx.channel.send(f'Please open: {registrationURL + str(id)} to register your account, then react with 👍 within 2 minutes. (If you get a timeout error, type $verify again and add the reaction).')
 
     log.info(f"Sent verification link to {username}.")
 
@@ -96,7 +105,7 @@ async def verifyUser(ctx):
                         print(f"The {role} role was not found on this server!")
             
                 # Store the ID of the New Pilot role
-                npRole = discord.utils.get(member.guild.roles, id=int(BC.discordRoles["New Pilot"]))
+                npRole = discord.utils.get(member.guild.roles, name="New Pilot")
                 
                 # Check if the user has the New Pilot role and remove it if verified.
                 if npRole in member.roles:
@@ -126,20 +135,16 @@ async def verifyUser(ctx):
             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 
-# Role Sync
-@bot.command(name="sync")
+# Role Sync, fetches data from server and compares to current roles and nickName
+@bot.command(name="sync", help=helpText[1])
 async def syncRoles(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.author
     
-    allowedRoles = [discord.utils.get(member.guild.roles, id = BC.discordRoles["Fleet Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Senior Staff"]), discord.utils.get(member.guild.roles, id = BC.discordRoles["Operations & Administrative Staff"])]
+    allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
 
-    for role in allowedRoles:
-        if role in ctx.author.roles:
-            break
-        else:
-            member = ctx.author
-            await ctx.send("Not allowed! Running on yourself.")
+    if not any(role in ctx.author.roles for role in allowedRoles):
+        member = ctx.author
 
     id = str(member).split("#")[1]
     
@@ -199,8 +204,40 @@ async def syncRoles(ctx, member: discord.Member=None):
             log.error("An unknown error occurred!")
 
 
+# Reads current log file and outputs it as a message
+@bot.command(name="log", help=helpText[2])
+async def viewLog(ctx, member: discord.Member=None):
+    member = ctx.author
+    currentLog = BC.displayLog()
+
+    allowedRoles = [discord.utils.get(member.guild.roles, name = "IT"), discord.utils.get(member.guild.roles, name = "Senior Staff"), discord.utils.get(member.guild.roles, name = "Operations & Administrative Staff")]
+
+    for role in allowedRoles:
+        if role in ctx.author.roles:
+            with open(str(currentLog), 'r') as l:
+                logContents = l.read(1992).strip()
+                while len(logContents) > 0:
+                    await ctx.channel.send(f"``` {logContents} ```")
+                    logContents = l.read(1992).strip()
+            break
+
+
+# Unregisters user by sending a GET request to the unregister URI
+@bot.command(name="unregister", help=helpText[3])
+async def unregUser(ctx, member: discord.Member=None):
+    if member is None:
+        member = ctx.author
+
+    allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
+
+    if not any(role in ctx.author.roles for role in allowedRoles):
+        member = ctx.author
+    
+    BC.unregUser(member.id)
+
+
 # Setup Help Command
-help.setup(bot)
+asyncio.run(help.setup(bot))
 
 
 # Event Handlers

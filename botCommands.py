@@ -6,8 +6,10 @@
 import requests
 import json
 import os
+# import dotenv # DEV ONLY
 
 # Global Constants
+# dotenv.load_dotenv() # DEV ONLY
 verificationURL = os.getenv('INFO_URL')
 unregURL = os.getenv('UNREG_URL')
 
@@ -37,7 +39,7 @@ afvaStaffRoles = [
 ]
 
 
-# Discord roles. Format: 'role': 'id'
+# # Discord roles. Format: 'role': 'id'
 discordRoles = {
     'AFVA-Booster': 793300706214936586,
     'AFVA-Shareholder': 904015787126325309,
@@ -178,6 +180,14 @@ def fetchUserInfo(id):
 
 def unregUser(id):
     req = requests.get(f"{unregURL + str(id)}")
+
+def displayLog():
+    logDir = './'
+    logFiles = sorted([f for f in os.listdir(logDir) if f.startswith('afva-bot-')])
+
+    currLog = logFiles[-1]
+
+    return currLog
 
 # Test code
 # user = verifyUser('0995')
