@@ -10,7 +10,7 @@ import logging as log
 import datetime
 import schedule
 import time
-import dotenv # DEV ONLY
+
 # Separate imports using from, 
 # adding init.py to cogs tells
 # the module loader to treat that 
@@ -21,7 +21,6 @@ from cogs import botCommands as BC
 
 
 # Global Constants
-dotenv.load_dotenv() # DEV ONLY
 token = os.getenv('TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
