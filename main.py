@@ -4,15 +4,21 @@
 # This example requires the 'message_content' intent.
 
 import discord
-from discord.ext import commands
 import os
-# import cogs.botCommands as BC
 import asyncio
 import logging as log
 import datetime
 import schedule
 import time
 import dotenv # DEV ONLY
+# Separate imports using from, 
+# adding init.py to cogs tells
+# the module loader to treat that 
+# directory as a module, then we import
+# using from.
+from discord.ext import commands
+from cogs import botCommands as BC
+
 
 # Global Constants
 dotenv.load_dotenv() # DEV ONLY
