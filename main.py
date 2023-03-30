@@ -50,7 +50,7 @@ client.remove_command('help')
 async def load_extensions():
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
-            if filename != 'botCommands.py':
+            if filename != 'botCommands.py' and filename != 'init.py':
                 await client.load_extension(f"cogs.{filename[:-3]}")
 
 # User verification

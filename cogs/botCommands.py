@@ -14,6 +14,8 @@ registrationURL = os.getenv('REG_URL')
 verificationURL = os.getenv('INFO_URL')
 unregURL = os.getenv('UNREG_URL')
 
+
+# This is not necessary. Need to verify that it may be removed.
 afvaStaffRoles = [
     "Fleet",
     "HireMgr",
@@ -76,7 +78,7 @@ discordRoles = {
     'everyone': 646368864187318302
 }
 
-# Available Ranks
+# Available Ranks (for assigning rank roles)
 afvaRanks = [
     "First Officer", 
     "Captain", 
@@ -85,7 +87,7 @@ afvaRanks = [
     "Chief Pilot"
 ]
 
-# Equipment Programs
+# Equipment Programs (for assigning program roles)
 afvaPrograms = [
     "A220-3(CSeries)", 
     "A320", 
@@ -101,7 +103,7 @@ afvaPrograms = [
 ]
 
 
-# Check username
+# Check username length to make sure it is less than 32 characters
 def usernameLength(name, id):
     if len(name + ' - ' + id) < 29:
         return name + ' - ' + id
@@ -148,6 +150,7 @@ def fetchUserInfo(id):
         try:
             jsonData = json.loads(rawData.text)
 
+        # Catch exception if the request failed.
         except TypeError:
             print("User is not registered! Please register your account and try again.")
             return None
