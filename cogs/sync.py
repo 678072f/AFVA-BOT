@@ -6,11 +6,12 @@
 import discord
 from discord.ext import commands
 import os
-import botCommands as BC
+from botCommands import fetchUserInfo, discordRoles
 import asyncio
 import logging as log
 
 helpText = "Use this command to sync your roles with your AFVA Profile.\nUsage: '$sync [OPTIONAL: @<member>]' (Only staff may update other users)."
+
 
 # Sync Cog
 class Sync(commands.Cog):
@@ -30,7 +31,7 @@ class Sync(commands.Cog):
         id = str(member).split("#")[1]
         
         try:
-            nickName, newRoles = BC.fetchUserInfo(id)
+            nickName, newRoles = fetchUserInfo(id)
             log.debug(f"Received {nickName} and {newRoles} roles.")
 
         except TypeError:
@@ -61,7 +62,7 @@ class Sync(commands.Cog):
         if newRoles is not None:
             discordRoleList = []
             currentRoleList = member.roles
-            ignoreRolesId = [BC.discordRoles["AFVA-Booster"], BC.discordRoles["AFVA-Shareholder"], BC.discordRoles["P1 - PPL"], BC.discordRoles["RW Pilot"], BC.discordRoles["CFI"], BC.discordRoles["DCFI"], BC.discordRoles["everyone"], BC.discordRoles["Senior Captain"], BC.discordRoles["Senior Staff"]]
+            ignoreRolesId = [discordRoles["AFVA-Booster"], discordRoles["AFVA-Shareholder"], discordRoles["P1 - PPL"], discordRoles["RW Pilot"], discordRoles["CFI"], discordRoles["DCFI"], discordRoles["everyone"], discordRoles["Senior Captain"], discordRoles["Senior Staff"]]
 
             ignoreRoles = []
             for roleID in ignoreRolesId:

@@ -6,7 +6,7 @@
 import discord
 from discord.ext import commands
 import os
-import botCommands as BC
+# import cogs.botCommands as BC
 import asyncio
 import logging as log
 import datetime
@@ -44,7 +44,8 @@ client.remove_command('help')
 async def load_extensions():
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py'):
-            await client.load_extension(f"cogs.{filename[:-3]}")
+            if filename != 'botCommands.py':
+                await client.load_extension(f"cogs.{filename[:-3]}")
 
 # User verification
 @client.command(name="verify1", help=helpText[0])
@@ -207,8 +208,8 @@ async def verifyUser(ctx):
 
 
 # Reads current log file and outputs it as a message
-@client.command(name="log", help=helpText[1])
-async def viewLog(ctx, member: discord.Member=None):
+@client.command(name="log1", help=helpText[1])
+async def viewLog(ctx):
     member = ctx.author
     currentLog = BC.displayLog()
 
