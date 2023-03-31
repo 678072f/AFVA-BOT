@@ -4,7 +4,6 @@
 # This example requires the 'message_content' intent.
 
 import discord
-from discord.ext import commands
 import os
 import botCommands as BC
 import asyncio
@@ -13,10 +12,12 @@ import datetime
 import schedule
 import time
 import help
-# import dotenv # DEV ONLY
+
+from discord.ext import commands
+# from dotenv import load_dotenv # DEV ONLY
 
 # Global Constants
-# dotenv.load_dotenv() # DEV ONLY
+# load_dotenv() # DEV ONLY
 token = os.getenv('TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
@@ -210,15 +211,11 @@ async def viewLog(ctx, member: discord.Member=None):
     member = ctx.author
     currentLog = BC.displayLog()
 
-    allowedRoles = [discord.utils.get(member.guild.roles, name = "IT"), discord.utils.get(member.guild.roles, name = "Senior Staff"), discord.utils.get(member.guild.roles, name = "Operations & Administrative Staff")]
+    allowedRoles = [discord.utils.get(member.guild.roles, name = "IT"), discord.utils.get(member.guild.roles, name = "Senior Staff"), discord.utils.get(member.guild.roles, name = "Operations & Administrative Staff"), discord.utils.get(member.guild.roles, name = "test-role")]
 
     for role in allowedRoles:
         if role in ctx.author.roles:
-            with open(str(currentLog), 'r') as l:
-                logContents = l.read(1992).strip()
-                while len(logContents) > 0:
-                    await ctx.channel.send(f"``` {logContents} ```")
-                    logContents = l.read(1992).strip()
+            await ctx.send(file=discord.File(currentLog), content=f"{currentLog}")
             break
 
 
@@ -227,13 +224,17 @@ async def viewLog(ctx, member: discord.Member=None):
 async def unregUser(ctx, member: discord.Member=None):
     if member is None:
         member = ctx.author
+    
+    memberID = str(member).split('#')[1]
 
     allowedRoles = [discord.utils.get(member.guild.roles, name="Fleet Staff"), discord.utils.get(member.guild.roles, name="Senior Staff"), discord.utils.get(member.guild.roles, name="Operations & Administrative Staff")]
 
     if not any(role in ctx.author.roles for role in allowedRoles):
         member = ctx.author
     
-    BC.unregUser(member.id)
+    BC.unregUser(memberID)
+    await ctx.send(f"Unregistered {member.mention}")
+    log.info(f"Unregistered {member}")
 
 
 # Setup Help Command
