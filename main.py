@@ -1,4 +1,4 @@
-# AFVA Bot Version 1.0
+# AFVA Bot Version 1.0.1
 # By: Daniel Duhon
 
 # This example requires the 'message_content' intent.
