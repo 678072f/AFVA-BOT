@@ -21,7 +21,7 @@ from cogs import botCommands as BC
 
 
 # Global Constants
-token = os.getenv('TOKEN')
+token = BC.TOKEN
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
 
@@ -37,6 +37,7 @@ log.basicConfig(
     level=log.DEBUG, ### Change to INFO when releasing ###
     format='%(levelname)s:%(asctime)s:%(message)s'
 )
+LOGGER = log.getLogger("main")
 
 # Setup Discord
 intents = discord.Intents.all()
@@ -52,95 +53,95 @@ async def load_extensions():
             if filename != 'botCommands.py' and filename != 'init.py':
                 await client.load_extension(f"cogs.{filename[:-3]}")
 
-# User verification
-@client.command(name="verify1", help=helpText[0])
-async def verifyUser(ctx):
-    member = ctx.author
-    username = str(member).split("#")[0]
-    id = str(member).split('#')[1]
-    reactionList = ['👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿']
+# # User verification
+# @client.command(name="verify1", help=helpText[0])
+# async def verifyUser(ctx):
+#     member = ctx.author
+#     username = str(member).split("#")[0]
+#     id = str(member).split('#')[1]
+#     reactionList = ['👍', '👍🏻', '👍🏼', '👍🏽', '👍🏾', '👍🏿']
 
-    # Respond to the user with a welcome message and send the verification link:
-    await ctx.channel.send(f"Hello {username}, I am sending you to the verification link.")
-    await ctx.channel.send(f'Please open: {registrationURL + str(id)} to register your account, then react with 👍 within 2 minutes. (If you get a timeout error, type $verify again and add the reaction).')
+#     # Respond to the user with a welcome message and send the verification link:
+#     await ctx.channel.send(f"Hello {username}, I am sending you to the verification link.")
+#     await ctx.channel.send(f'Please open: {registrationURL + str(id)} to register your account, then react with 👍 within 2 minutes. (If you get a timeout error, type $verify again and add the reaction).')
 
-    log.info(f"Sent verification link to {username}.")
+#     log.info(f"Sent verification link to {username}.")
 
-    # Define function to check for thumbsup reaction
-    def check(reaction, user):
-        react = None
-        for i in reactionList:
-            if str(reaction.emoji) == i:
-                react = i
-                break
+#     # Define function to check for thumbsup reaction
+#     def check(reaction, user):
+#         react = None
+#         for i in reactionList:
+#             if str(reaction.emoji) == i:
+#                 react = i
+#                 break
             
-        return user == member and str(reaction.emoji) == react
+#         return user == member and str(reaction.emoji) == react
 
-    try:
-        # Check for the user's reaction
-        reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)
-        # Store the user's nickname and roles from the verification Function
+#     try:
+#         # Check for the user's reaction
+#         reaction, user = await bot.wait_for('reaction_add', timeout=120.0, check=check)
+#         # Store the user's nickname and roles from the verification Function
         
-        try:
-            nickName, roleList = BC.fetchUserInfo(id)
-            log.debug(f"Received {nickName} and {roleList} roles.")
-        except TypeError:
-            await ctx.channel.send(f"Error! {member} is not registered.\nPlease use $verify again and register using the link provided.")
-            log.error(f"Verification Error! {member} is not registered.")
-            return
+#         try:
+#             nickName, roleList = BC.fetchUserInfo(id)
+#             log.debug(f"Received {nickName} and {roleList} roles.")
+#         except TypeError:
+#             await ctx.channel.send(f"Error! {member} is not registered.\nPlease use $verify again and register using the link provided.")
+#             log.error(f"Verification Error! {member} is not registered.")
+#             return
 
-        if roleList:
-            # Iterate through the roles provided from the server
-            for afvaRole in roleList:
-                # Check if the role exists and store in 'role'
-                role = discord.utils.get(member.guild.roles, id = int(afvaRole))
+#         if roleList:
+#             # Iterate through the roles provided from the server
+#             for afvaRole in roleList:
+#                 # Check if the role exists and store in 'role'
+#                 role = discord.utils.get(member.guild.roles, id = int(afvaRole))
 
-                # Check if the user already has the role. If yes, skip
-                if role in member.roles:
-                    log.info(f"You already have the {role} role! Moving on...")
-                    print(f"You already have the {role} role! Moving on...")
-                # If the user doesn't already have the role, add it
-                else:
-                    # Make sure the role exists
-                    if role is not None:
-                        await member.add_roles(role)
-                        log.info(f"Added {role} role to {member}.")
-                        print(f"Added {role} role.")
+#                 # Check if the user already has the role. If yes, skip
+#                 if role in member.roles:
+#                     log.info(f"You already have the {role} role! Moving on...")
+#                     print(f"You already have the {role} role! Moving on...")
+#                 # If the user doesn't already have the role, add it
+#                 else:
+#                     # Make sure the role exists
+#                     if role is not None:
+#                         await member.add_roles(role)
+#                         log.info(f"Added {role} role to {member}.")
+#                         print(f"Added {role} role.")
                     
-                    # Send a message if the role isn't available
-                    else:
-                        log.warning(f"The {role} role was not found on this server!")
-                        print(f"The {role} role was not found on this server!")
+#                     # Send a message if the role isn't available
+#                     else:
+#                         log.warning(f"The {role} role was not found on this server!")
+#                         print(f"The {role} role was not found on this server!")
             
-                # Store the ID of the New Pilot role
-                npRole = discord.utils.get(member.guild.roles, name="New Pilot")
+#                 # Store the ID of the New Pilot role
+#                 npRole = discord.utils.get(member.guild.roles, name="New Pilot")
                 
-                # Check if the user has the New Pilot role and remove it if verified.
-                if npRole in member.roles:
-                    await member.remove_roles(npRole)
-                    log.info(f"Removed New Pilot role from {member}")
+#                 # Check if the user has the New Pilot role and remove it if verified.
+#                 if npRole in member.roles:
+#                     await member.remove_roles(npRole)
+#                     log.info(f"Removed New Pilot role from {member}")
 
-        else:
-            log.info(f"Error! The roleList is empty!")
+#         else:
+#             log.info(f"Error! The roleList is empty!")
 
-        # Respond with user's new nickname
-        if nickName is not None:
-            await ctx.channel.send(f"Success! Hello {nickName}")
-            log.info('User successfully verified.')
+#         # Respond with user's new nickname
+#         if nickName is not None:
+#             await ctx.channel.send(f"Success! Hello {nickName}")
+#             log.info('User successfully verified.')
 
-    # Catch timeout
-    except asyncio.TimeoutError:
-        nickName = None
-        await ctx.channel.send('Timeout Error! You did not react within 2 minutes. Please try again.')
-        log.warning('Timeout Error! Please try again. User did not respond within 2 minutes.')
+#     # Catch timeout
+#     except asyncio.TimeoutError:
+#         nickName = None
+#         await ctx.channel.send('Timeout Error! You did not react within 2 minutes. Please try again.')
+#         log.warning('Timeout Error! Please try again. User did not respond within 2 minutes.')
 
-    # Update Nickname
-    if nickName is not None:
-        try:
-            await member.edit(nick=nickName)
-            log.info(f"{member}'s nickname was updated to: {nickName}.")
-        except discord.errors.Forbidden:
-            log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+#     # Update Nickname
+#     if nickName is not None:
+#         try:
+#             await member.edit(nick=nickName)
+#             log.info(f"{member}'s nickname was updated to: {nickName}.")
+#         except discord.errors.Forbidden:
+#             log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 
 # Role Sync, fetches data from server and compares to current roles and nickName
@@ -212,22 +213,22 @@ async def verifyUser(ctx):
 #             log.error("An unknown error occurred!")
 
 
-# Reads current log file and outputs it as a message
-@client.command(name="log1", help=helpText[1])
-async def viewLog(ctx):
-    member = ctx.author
-    currentLog = BC.displayLog()
+# # Reads current log file and outputs it as a message
+# @client.command(name="log1", help=helpText[1])
+# async def viewLog(ctx):
+#     member = ctx.author
+#     currentLog = BC.displayLog()
 
-    allowedRoles = [discord.utils.get(member.guild.roles, name = "IT"), discord.utils.get(member.guild.roles, name = "Senior Staff"), discord.utils.get(member.guild.roles, name = "Operations & Administrative Staff")]
+#     allowedRoles = [discord.utils.get(member.guild.roles, name = "IT"), discord.utils.get(member.guild.roles, name = "Senior Staff"), discord.utils.get(member.guild.roles, name = "Operations & Administrative Staff")]
 
-    for role in allowedRoles:
-        if role in ctx.author.roles:
-            with open(str(currentLog), 'r') as l:
-                logContents = l.read(1992).strip()
-                while len(logContents) > 0:
-                    await ctx.channel.send(f"``` {logContents} ```")
-                    logContents = l.read(1992).strip()
-            break
+#     for role in allowedRoles:
+#         if role in ctx.author.roles:
+#             with open(str(currentLog), 'r') as l:
+#                 logContents = l.read(1992).strip()
+#                 while len(logContents) > 0:
+#                     await ctx.channel.send(f"``` {logContents} ```")
+#                     logContents = l.read(1992).strip()
+#             break
 
 
 # # Unregisters user by sending a GET request to the unregister URI

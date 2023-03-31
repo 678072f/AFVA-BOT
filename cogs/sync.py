@@ -4,11 +4,12 @@
 # Sync Command Cog v1.0
 
 import discord
-from discord.ext import commands
 import os
 import asyncio
 import logging as log
-import botCommands as BC
+
+from discord.ext import commands
+from . import botCommands as BC
 
 helpText = "Use this command to sync your roles with your AFVA Profile.\nUsage: '$sync [OPTIONAL: @<member>]' (Only staff may update other users)."
 

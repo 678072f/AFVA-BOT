@@ -4,11 +4,13 @@
 # Log Command Cog v1.0
 
 import discord
-from discord.ext import commands
 import os
-import botCommands as BC
 import asyncio
 import logging as log
+
+from discord.ext import commands
+from . import botCommands as BC
+
 
 helpText = "Use this function to view the log (IT only).\nUsage: '$log'"
 

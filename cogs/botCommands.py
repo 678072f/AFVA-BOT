@@ -7,10 +7,15 @@ import requests
 import json
 import os
 
+# Temp import
+from dotenv import load_dotenv
+
 # Global Constants
+load_dotenv()
 registrationURL = os.getenv('REG_URL')
 verificationURL = os.getenv('INFO_URL')
 unregURL = os.getenv('UNREG_URL')
+TOKEN = os.getenv('TOKEN')
 
 
 # This is not necessary. Need to verify that it may be removed.

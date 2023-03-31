@@ -4,12 +4,14 @@
 # Verify Command Cog v1.0
 
 import discord
-from discord.ext import commands
 import os
-import botCommands as BC
 import asyncio
 import logging as log
 
+from discord.ext import commands
+from . import botCommands as BC
+
+LOG = log.getLogger(__name__)
 helpText = "Use this account to register your discord account with your AFVA profile.\nUsage: '$verify' - You MUST react to the message contaning the link with :thumbsup:"
 
 # Verify Cog
@@ -42,15 +44,16 @@ class Verify(commands.Cog):
 
         try:
             # Check for the user's reaction
-            reaction, user = await ctx.wait_for('reaction_add', timeout=120.0, check=check)
+            reaction, user = await ctx.channel.wait_for('reaction_add', timeout=120.0, check=check)
             # Store the user's nickname and roles from the verification Function
             
             try:
-                nickName, roleList = BC.fetchUserInfo(id)
-                log.debug(f"Received {nickName} and {roleList} roles.")
+                runUpdate = asyncio.create_task(BC.fetchUserInfo(id))
+                nickName, roleList = await runUpdate
+                LOG.debug(f"Received {nickName} and {roleList} roles.")
             except TypeError:
                 await ctx.channel.send(f"Error! {member} is not registered.\nPlease use $verify again and register using the link provided.")
-                log.error(f"Verification Error! {member} is not registered.")
+                LOG.error(f"Verification Error! {member} is not registered.")
                 return
 
             if roleList:
@@ -61,19 +64,19 @@ class Verify(commands.Cog):
 
                     # Check if the user already has the role. If yes, skip
                     if role in member.roles:
-                        log.info(f"You already have the {role} role! Moving on...")
+                        LOG.info(f"You already have the {role} role! Moving on...")
                         print(f"You already have the {role} role! Moving on...")
                     # If the user doesn't already have the role, add it
                     else:
                         # Make sure the role exists
                         if role is not None:
                             await member.add_roles(role)
-                            log.info(f"Added {role} role to {member}.")
+                            LOG.info(f"Added {role} role to {member}.")
                             print(f"Added {role} role.")
                         
                         # Send a message if the role isn't available
                         else:
-                            log.warning(f"The {role} role was not found on this server!")
+                            LOG.warning(f"The {role} role was not found on this server!")
                             print(f"The {role} role was not found on this server!")
                 
                     # Store the ID of the New Pilot role
@@ -82,29 +85,29 @@ class Verify(commands.Cog):
                     # Check if the user has the New Pilot role and remove it if verified.
                     if npRole in member.roles:
                         await member.remove_roles(npRole)
-                        log.info(f"Removed New Pilot role from {member}")
+                        LOG.info(f"Removed New Pilot role from {member}")
 
             else:
-                log.info(f"Error! The roleList is empty!")
+                LOG.info(f"Error! The roleList is empty!")
 
             # Respond with user's new nickname
             if nickName is not None:
                 await ctx.channel.send(f"Success! Hello {nickName}")
-                log.info('User successfully verified.')
+                LOG.info('User successfully verified.')
 
         # Catch timeout
         except asyncio.TimeoutError:
             nickName = None
             await ctx.channel.send('Timeout Error! You did not react within 2 minutes. Please try again.')
-            log.warning('Timeout Error! Please try again. User did not respond within 2 minutes.')
+            LOG.warning('Timeout Error! Please try again. User did not respond within 2 minutes.')
 
         # Update Nickname
         if nickName is not None:
             try:
                 await member.edit(nick=nickName)
-                log.info(f"{member}'s nickname was updated to: {nickName}.")
+                LOG.info(f"{member}'s nickname was updated to: {nickName}.")
             except discord.errors.Forbidden:
-                log.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
+                LOG.error(f"The bot does not have permission to change {member}'s nickname! Please verify action and try again.")
 
 async def setup(bot):
     await bot.add_cog(Verify(bot))
