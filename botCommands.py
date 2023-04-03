@@ -1,6 +1,6 @@
- # Commands for AFVA BOT
+# Commands for AFVA BOT
  
- # AFVA Bot Version 1.0
+# AFVA Bot Version 1.0.1
 # By: Daniel Duhon
 
 import requests

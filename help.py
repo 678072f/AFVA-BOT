@@ -1,17 +1,25 @@
+# AFVA-BOT Help Menu
+ 
+# AFVA Bot Version 1.0.1
+# By: Daniel Duhon
+
+# Imports
 import discord
+
 from discord.ext import commands
 from discord.errors import Forbidden
 
 # Function to send embedded message
-async def sendEmbed(ctx, emb):
+async def sendEmbed(ctx, emb: dict):
     try:
         await ctx.send(embed=emb)
+
     except Forbidden:
         try:
             await ctx.send("I don't have permission to embed. Please have @IT check bot permisssions.")
         except Forbidden:
             await ctx.author.send(
-                f"Hey @{ctx.author}, I don't have permission to send messages in {ctx.channel.name} on {ctx.guild.name}\n"
+                f"Hey {ctx.author.mention}, I don't have permission to send messages in {ctx.channel.name} on {ctx.guild.name}\n"
                 f"Please inform info@afva.net about this issue and we will resolve it as soon as possible! :slight_smile: ", embed=emb
             )
 
@@ -26,16 +34,22 @@ class Help(commands.Cog):
     async def help(self, ctx, *input):
         # Setup COG functionality
         prefix = '$'
-        version = "1.0"
+        version = "1.0.1"
         
         # Set owner name
         owner = '0995'
         owner_name = 'danielgduhon#0995'
 
+        # Default EMBED
+        EMBED = ''
+
         # Check if COG parameter was given
         if not input:
+            # Mention Owner
             try:
                 owner = ctx.guild.get_member(owner).mention
+
+            # Catch Errors
             except AttributeError as e:
                 owner = owner
 

@@ -12,11 +12,11 @@ https://www.afva.net/
 - Registering User's Discord account with afva.net user account.
 - Verifying user registration and auto-assigning roles and updating nickname.
 - Display help menu with $help command.
-- Clears #verification channel weekly on Fridays at 23:59.*
+- Clears #verification channel weekly on Fridays at 23:59.
 - Allows users to use a $sync command to update their roles.
 - Handles cases where someone tries to use certain commands before registration.
-
-\* - Not yet tested.
+- Allows IT Staff to view Log within Discord
+- Allows Staff to sync and unregister users
 
 # Future Plans
 
@@ -25,6 +25,9 @@ https://www.afva.net/
 - Add feature to share ACARS flight status messages in a "dispatch" channel.
 
 # Known-Issues
+3/29/2023:
+
+- Auto-clearing not working.
 
 2/19/2023: <- All are Fixed as of 3/15/2023
 
