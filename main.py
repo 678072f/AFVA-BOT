@@ -18,7 +18,7 @@ from discord.ext import commands
 
 # Global Constants
 # load_dotenv() # DEV ONLY
-token = os.getenv('TOKEN')
+token = os.getenv('DEV_TOKEN')
 registrationURL = os.getenv('REG_URL')
 currentTime = str(datetime.datetime.now()).split(' ')[0]
 
@@ -254,6 +254,7 @@ async def on_member_join(member):
     channel = discord.utils.get(member.guild.text_channels, name="new-members")
     embedJoin = discord.Embed(title=f"Welcome to Air France/KLM Virtual Airlines, {member.mention}! :flag_fr: :flag_fr:", description=f"Please visit the #rules channel to see the rules for the server.\n\n Most importantly, please continue to have fun!\n\n Also, you may verify your account by typing `$verify` in #verification, or type `$help` to see a list of options.", color=0x0b228c)
     await channel.send(embed=embedJoin)
+    log.info(f"{member} joined on {currentTime}")
 
 
 # Function to clear verification channel
