@@ -9,22 +9,28 @@ https://www.afva.net/
 
 # Capabilities
 
-- Registering User's Discord account with afva.net user account.
-- Verifying user registration and auto-assigning roles and updating nickname.
-- Display help menu with $help command.
-- Clears #verification channel weekly on Fridays at 23:59.
-- Allows users to use a $sync command to update their roles.
-- Handles cases where someone tries to use certain commands before registration.
-- Allows IT Staff to view Log within Discord
-- Allows Staff to sync and unregister users
+- Registering User's Discord account with afva.net user account. (Conversion to JS complete)
+- Verifying user registration and auto-assigning roles and updating nickname (Partially done, nickname portion complete).
+- Display help menu with $help command (Not yet implemented in JS version).
+- Clears #verification channel weekly on Fridays at 23:59 (Not yet implemented).
+- Allows users to use a $sync command to update their roles (nickname complete in JS version).
+- Handles cases where someone tries to use certain commands before registration (not yet implemented in JS).
+- Allows IT Staff to view Log within Discord (not yet implemented in JS)
+- Allows Staff to sync and unregister users (not yet implemented in JS)
 
 # Future Plans
 
 - Add Feature to post announcements from the website using a webhook (may need input from site).
 - Add feature to detect and announce pilot promotions (like the automated ones in the Forums on the website).
 - Add feature to share ACARS flight status messages in a "dispatch" channel.
+- Complete conversion to JS code.
 
 # Known-Issues
+
+12/24/2023:
+
+- Some features missing, see # Capabilities section for details.
+
 3/29/2023:
 
 - Auto-clearing not working.
