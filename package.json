@@ -1,0 +1,20 @@
+{
+  "name": "afva-bot",
+  "version": "1.0.0",
+  "description": "This is a Discord Bot for Air France/KLM Virtual Airlines.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "discord": "^0.8.2",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.56.0"
+  }
+}
