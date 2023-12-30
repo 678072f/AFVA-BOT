@@ -10,10 +10,10 @@ https://www.afva.net/
 # Capabilities
 
 - Registering User's Discord account with afva.net user account. (Conversion to JS complete)
-- Verifying user registration and auto-assigning roles and updating nickname (Partially done, nickname portion complete).
-- Display help menu with $help command (Not yet implemented in JS version).
+- Verifying user registration and auto-assigning roles and updating nickname (Complete in JS-dev, use /sync).
+- Display help menu with /help command (Not yet implemented in JS version).
 - Clears #verification channel weekly on Fridays at 23:59 (Not yet implemented).
-- Allows users to use a $sync command to update their roles (nickname complete in JS version).
+- Allows users to use a /sync command to update their roles (complete in JS-dev version).
 - Handles cases where someone tries to use certain commands before registration (not yet implemented in JS).
 - Allows IT Staff to view Log within Discord (not yet implemented in JS)
 - Allows Staff to sync and unregister users (not yet implemented in JS)
